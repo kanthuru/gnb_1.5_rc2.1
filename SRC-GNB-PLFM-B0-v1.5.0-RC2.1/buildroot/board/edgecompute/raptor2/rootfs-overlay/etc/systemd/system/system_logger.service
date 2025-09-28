@@ -1,0 +1,13 @@
+[Unit]
+Description=Service to Launch Raptor2 System logger Service
+Before=monit.service
+
+[Service]
+User=root
+WorkingDirectory=/root
+Type=oneshot
+ExecStart=/bin/bash '/etc/system_logger.sh'
+Restart=on-failure
+ 
+[Install]
+WantedBy=multi-user.target

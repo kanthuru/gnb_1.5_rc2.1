@@ -1,0 +1,5 @@
+# Raptor-2
+config EDGEQ_RAPTOR2_LOGGER
+	bool "Support for EdgeQ Raptor2 Logger"
+	default n
+	#default y if ARCH_EDGEQ

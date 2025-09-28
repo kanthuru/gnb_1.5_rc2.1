@@ -1,0 +1,209 @@
+From 8d98e36bca14e5b1c8e498b2d796f06afb448f27 Mon Sep 17 00:00:00 2001
+From: akhileshedgeq <c_sanjaykadam@edgeq.io>
+Date: Thu, 5 Sep 2024 17:12:02 +0530
+Subject: [PATCH] Added support for -a,--as-is support in gpioget command
+
+Signed-off-by: akhileshedgeq <c_sanjaykadam@edgeq.io>
+---
+ include/gpiod.h | 10 +++++-----
+ lib/ctxless.c   | 16 ++++++++--------
+ lib/helpers.c   |  5 ++++-
+ tools/gpioget.c | 10 ++++++++--
+ 4 files changed, 25 insertions(+), 16 deletions(-)
+
+diff --git a/include/gpiod.h b/include/gpiod.h
+index 3477f9d..7816171 100644
+--- a/include/gpiod.h
++++ b/include/gpiod.h
+@@ -113,7 +113,7 @@ enum {
+  * @return 0 or 1 (GPIO value) if the operation succeeds, -1 on error.
+  */
+ int gpiod_ctxless_get_value(const char *device, unsigned int offset,
+-			    bool active_low, const char *consumer) GPIOD_API;
++			    bool active_low, const char *consumer, int dir) GPIOD_API;
+ 
+ /**
+  * @brief Read current value from a single GPIO line.
+@@ -126,7 +126,7 @@ int gpiod_ctxless_get_value(const char *device, unsigned int offset,
+  */
+ int gpiod_ctxless_get_value_ext(const char *device, unsigned int offset,
+ 				bool active_low, const char *consumer,
+-				int flags) GPIOD_API;
++				int flags, int dir) GPIOD_API;
+ 
+ /**
+  * @brief Read current values from a set of GPIO lines.
+@@ -141,7 +141,7 @@ int gpiod_ctxless_get_value_ext(const char *device, unsigned int offset,
+ int gpiod_ctxless_get_value_multiple(const char *device,
+ 				     const unsigned int *offsets, int *values,
+ 				     unsigned int num_lines, bool active_low,
+-				     const char *consumer) GPIOD_API;
++				     const char *consumer, int dir) GPIOD_API;
+ 
+ /**
+  * @brief Read current values from a set of GPIO lines.
+@@ -158,7 +158,7 @@ int gpiod_ctxless_get_value_multiple_ext(const char *device,
+ 					 const unsigned int *offsets,
+ 					 int *values, unsigned int num_lines,
+ 					 bool active_low, const char *consumer,
+-					 int flags) GPIOD_API;
++					 int flags, int dir) GPIOD_API;
+ 
+ /**
+  * @brief Simple set value callback signature.
+@@ -1204,7 +1204,7 @@ int gpiod_line_request_bulk_both_edges_events(struct gpiod_line_bulk *bulk,
+  */
+ int gpiod_line_request_bulk_input_flags(struct gpiod_line_bulk *bulk,
+ 					const char *consumer,
+-					int flags) GPIOD_API;
++					int flags, int dir) GPIOD_API;
+ 
+ /**
+  * @brief Reserve a set of GPIO lines, set the direction to output.
+diff --git a/lib/ctxless.c b/lib/ctxless.c
+index 014475c..988836f 100644
+--- a/lib/ctxless.c
++++ b/lib/ctxless.c
+@@ -35,12 +35,12 @@ static int ctxless_flags_to_line_request_flags(bool active_low, int flags)
+ }
+ 
+ int gpiod_ctxless_get_value(const char *device, unsigned int offset,
+-			    bool active_low, const char *consumer)
++			    bool active_low, const char *consumer, int dir)
+ {
+ 	int value, rv;
+ 
+ 	rv = gpiod_ctxless_get_value_multiple(device, &offset, &value,
+-					      1, active_low, consumer);
++					      1, active_low, consumer, dir);
+ 	if (rv < 0)
+ 		return rv;
+ 
+@@ -49,12 +49,12 @@ int gpiod_ctxless_get_value(const char *device, unsigned int offset,
+ 
+ int gpiod_ctxless_get_value_ext(const char *device, unsigned int offset,
+ 				bool active_low, const char *consumer,
+-				int flags)
++				int flags, int dir)
+ {
+ 	int value, rv;
+ 
+ 	rv = gpiod_ctxless_get_value_multiple_ext(device, &offset, &value, 1,
+-						  active_low, consumer, flags);
++						  active_low, consumer, flags, dir);
+ 	if (rv < 0)
+ 		return rv;
+ 
+@@ -64,13 +64,13 @@ int gpiod_ctxless_get_value_ext(const char *device, unsigned int offset,
+ int gpiod_ctxless_get_value_multiple(const char *device,
+ 				     const unsigned int *offsets, int *values,
+ 				     unsigned int num_lines, bool active_low,
+-				     const char *consumer)
++				     const char *consumer, int dir)
+ {
+ 	int rv;
+ 
+ 	rv = gpiod_ctxless_get_value_multiple_ext(device, offsets, values,
+ 						  num_lines, active_low,
+-						  consumer, 0);
++						  consumer, 0, dir);
+ 	return rv;
+ }
+ 
+@@ -78,7 +78,7 @@ int gpiod_ctxless_get_value_multiple_ext(const char *device,
+ 					 const unsigned int *offsets,
+ 					 int *values, unsigned int num_lines,
+ 					 bool active_low,
+-					 const char *consumer, int flags)
++					 const char *consumer, int flags, int dir)
+ {
+ 	struct gpiod_line_bulk bulk;
+ 	struct gpiod_chip *chip;
+@@ -108,7 +108,7 @@ int gpiod_ctxless_get_value_multiple_ext(const char *device,
+ 	}
+ 
+ 	req_flags = ctxless_flags_to_line_request_flags(active_low, flags);
+-	rv = gpiod_line_request_bulk_input_flags(&bulk, consumer, req_flags);
++	rv = gpiod_line_request_bulk_input_flags(&bulk, consumer, req_flags, dir);
+ 	if (rv < 0) {
+ 		gpiod_chip_close(chip);
+ 		return -1;
+diff --git a/lib/helpers.c b/lib/helpers.c
+index 479f370..b399e7f 100644
+--- a/lib/helpers.c
++++ b/lib/helpers.c
+@@ -340,7 +340,7 @@ int gpiod_line_request_bulk_both_edges_events(struct gpiod_line_bulk *bulk,
+ }
+ 
+ int gpiod_line_request_bulk_input_flags(struct gpiod_line_bulk *bulk,
+-					const char *consumer, int flags)
++					const char *consumer, int flags, int dir)
+ {
+ 	struct gpiod_line_request_config config = {
+ 		.consumer = consumer,
+@@ -348,6 +348,9 @@ int gpiod_line_request_bulk_input_flags(struct gpiod_line_bulk *bulk,
+ 		.flags = flags,
+ 	};
+ 
++	if (dir == GPIOD_LINE_REQUEST_DIRECTION_AS_IS)
++		config.request_type = GPIOD_LINE_REQUEST_DIRECTION_AS_IS;
++
+ 	return gpiod_line_request_bulk(bulk, &config, 0);
+ }
+ 
+diff --git a/tools/gpioget.c b/tools/gpioget.c
+index 815507d..a4b088d 100644
+--- a/tools/gpioget.c
++++ b/tools/gpioget.c
+@@ -17,11 +17,12 @@ static const struct option longopts[] = {
+ 	{ "help",	no_argument,		NULL,	'h' },
+ 	{ "version",	no_argument,		NULL,	'v' },
+ 	{ "active-low",	no_argument,		NULL,	'l' },
++	{ "as-is",  no_argument,            NULL,   'a' },
+ 	{ "bias",	required_argument,	NULL,	'B' },
+ 	{ GETOPT_NULL_LONGOPT },
+ };
+ 
+-static const char *const shortopts = "+hvlB:";
++static const char *const shortopts = "+hvlaB:";
+ 
+ static void print_help(void)
+ {
+@@ -32,6 +33,7 @@ static void print_help(void)
+ 	printf("\n");
+ 	printf("Options:\n");
+ 	printf("  -h, --help:\t\tdisplay this message and exit\n");
++	printf("  -a, --as-is\t\tkeep the gpio direction unchanged\n");
+ 	printf("  -v, --version:\tdisplay the version and exit\n");
+ 	printf("  -l, --active-low:\tset the line active state to low\n");
+ 	printf("  -B, --bias=[as-is|disable|pull-down|pull-up] (defaults to 'as-is'):\n");
+@@ -47,6 +49,7 @@ int main(int argc, char **argv)
+ 	bool active_low = false;
+ 	int flags = 0;
+ 	char *device, *end;
++	int dir = 0;
+ 
+ 	for (;;) {
+ 		optc = getopt_long(argc, argv, shortopts, longopts, &opti);
+@@ -66,6 +69,9 @@ int main(int argc, char **argv)
+ 		case 'B':
+ 			flags = bias_flags(optarg);
+ 			break;
++		case 'a':
++			dir = GPIOD_LINE_REQUEST_DIRECTION_AS_IS;
++			break;
+ 		case '?':
+ 			die("try %s --help", get_progname());
+ 		default:
+@@ -98,7 +104,7 @@ int main(int argc, char **argv)
+ 
+ 	rv = gpiod_ctxless_get_value_multiple_ext(device, offsets, values,
+ 						  num_lines, active_low,
+-						  "gpioget", flags);
++						  "gpioget", flags, dir);
+ 	if (rv < 0)
+ 		die_perror("error reading GPIO values");
+ 
+-- 
+2.25.1
+

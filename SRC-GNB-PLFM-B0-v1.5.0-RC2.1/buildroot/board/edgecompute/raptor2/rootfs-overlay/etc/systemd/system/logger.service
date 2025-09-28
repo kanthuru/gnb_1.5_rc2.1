@@ -1,0 +1,11 @@
+[Unit]
+Description=Service to Launch Raptor2 Logger Service
+
+[Service]
+User=root
+WorkingDirectory=/root
+ExecStart=/bin/bash '/etc/l1logger_service.sh'
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

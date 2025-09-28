@@ -1,0 +1,6 @@
+# Raptor-2
+config EDGEQ_RAPTOR2_EEPROM
+		bool "Support for exposing EEPROM Data to userspace"
+		default y
+		depends on ARCH_EDGEQ
+		depends on EDGEQ_RAPTOR2

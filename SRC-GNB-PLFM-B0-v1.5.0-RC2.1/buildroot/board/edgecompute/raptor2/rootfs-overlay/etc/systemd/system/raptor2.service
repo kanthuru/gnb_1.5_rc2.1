@@ -1,0 +1,13 @@
+[Unit]
+Description=Service to Launch Raptor2 Service
+
+[Service]
+User=root
+WorkingDirectory=/root
+ExecStart=/bin/bash '/raptor/etc/raptor2_service.sh'
+ExecStop=/raptor/etc/raptor2_service_stop.sh
+Restart=no
+LimitCORE=infinity
+
+[Install]
+#WantedBy=multi-user.target

@@ -1,0 +1,41 @@
+
+arch=arm
+baudrate=115200
+board=raptor2
+board_name=raptor2
+_bootargs=console=ttyS0,115200n8 earlycon=edgeq8250,mmio32,0x70434040,115200n8 sctp.no_checksums=Y idle=poll selinux=0 enforcing=0 nmi_watchdog=0 audit=0 irqaffinity=0 skew_tick=1 isolcpus=2-12,14,15 nosoftlockup nohz=on nohz_full=2-12,14,15 rcu_nocbs=2-12,14,15 sysctl.kernel.sched_min_granularity_ns=100000 sysctl.kernel.sched_wakeup_granularity_ns=20000 sysctl.kernel.sched_latency_ns=500000 sysctl.kernel.sched_rt_runtime_us=-1 sysctl.vm.min_free_kbytes=204800
+bootargs_f=setenv bootargs root=/dev/mmcblk0p14 rootwait rw ${_bootargs}
+bootargs_r=setenv bootargs root=/dev/ram0 rw ${_bootargs}
+bootcmd=run bootcmd_fit
+bootcmd_f=run bootargs_f; run emmc_boot
+bootcmd_fit=run bootargs_f; run emmc_boot_fit
+bootcmd_r=run bootargs_r; run tftp_boot
+bootdelay=5
+boot_linux_f=booti ${kernel_addr_r} - ${fdt_addr_r}
+boot_linux_fit=bootm ${fit_addr_r}#a0_pegasus
+boot_linux_r=booti ${kernel_addr_r} ${ramdisk_addr_r} ${fdt_addr_r}
+cpu=armv8
+emmc_boot=run emmc_load_fdt; run emmc_load_kernel; run boot_linux_f
+emmc_boot_fit=run emmc_load_fit; run boot_linux_fit
+emmc_load_fdt=ext4load mmc 0:1 ${fdt_addr_r} /raptor2-A0-pegasus.dtb
+emmc_load_fit=ext4load mmc 0:1 ${fit_addr_r} /raptor2-A0-B0.itb
+emmc_load_kernel=ext4load mmc 0:1 ${kernel_addr_r} /Image
+ethact=eth0
+ethlink=2
+ethspeed=2g5
+fdt_addr_r=0x406000000
+firmware_addr_f=0x0
+firmware_addr_r=0x402000000
+fit_addr_r=0x431800000
+flash_firmware=sf probe; sf update ${firmware_addr_r} ${firmware_addr_f} ${filesize}
+kernel_addr_r=0x408000000
+loopback=none
+ramdisk_addr_r=0x40C000000
+soc=raptor2
+tftp_boot=run tftp_linux; run boot_linux_r
+tftp_fdt=tftp ${fdt_addr_r} ${img_path}/raptor2-A0-pegasus.dtb
+tftp_firmware=tftp ${firmware_addr_r} ${img_path}/firmware.bin
+tftp_kernel=tftp ${kernel_addr_r} ${img_path}/Image
+tftp_linux=run tftp_fdt; run tftp_kernel; run tftp_ramdisk
+tftp_ramdisk=tftp ${ramdisk_addr_r} ${img_path}/uRamdisk.img
+vendor=edgeq

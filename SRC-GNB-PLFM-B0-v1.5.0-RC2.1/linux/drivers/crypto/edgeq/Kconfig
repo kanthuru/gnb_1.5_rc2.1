@@ -1,0 +1,17 @@
+config CRYPTO_DEV_RAPTOR2_CRSS
+	bool "Support for EdgeQ Raptor2 CRSS"
+	select CRYPTO_AEAD
+	select CRYPTO_AES
+	select CRYPTO_AUTHENC
+	select CRYPTO_SKCIPHER
+	select CRYPTO_CBC
+	select CRYPTO_CTR
+	select CRYPTO_SEQIV
+	select CRYPTO_GCM
+	default y
+	help
+	  This option enables support for the EdgeQ CRSS crypto accelerator
+	  in the Raptor2 SoC devices. It allows the crypto hardware offload
+	  for the generic tranformations (like ctr(aes), gcm(aes), etc) as
+	  well as the transformations for IPSEC ESP (like rfc4106(gcm(aes))).
+

@@ -1,0 +1,118 @@
+/* SPDX-License-Identifier: GPL-2.0
+ * Copyright (c) 2023 EdgeQ, Inc.
+ * Raptor2 Common defines for SUs
+ */
+
+#ifndef _RAPTOR2_SU_COMMON_H
+#define _RAPTOR2_SU_COMMON_H
+
+typedef enum {
+	ENGINE_PPU	= 0,
+	ENGINE_PPU_MXL	= 1,
+	ENGINE_PPU_CRSS	= 2,
+	ENGINE_OTRX_HSU	= 3,
+	ENGINE_OTRX_QSU	= 4,
+	ENGINE_SPU	= 5,
+	ENGINE_ECPRI	= 6,
+	ENGINE_TXU	= 7,
+	ENGINE_IRING	= 8,
+	ENGINE_NONE	= 255,
+} r2_engine_t;
+
+typedef enum {
+	R2_VERSION_A0		= 0,
+	R2_VERSION_B0		= 1,
+} r2_chip_version_t;
+
+#define NUM_MINOR_DEVS		22
+#define NUM_MINOR_DEVS_A0	22
+#define NUM_MINOR_DEVS_B0	24
+
+typedef enum {
+	SU_START	= 0,
+	PPU0		= 1,
+	PPU1,
+	PPU_MXL0,
+	PPU_MXL1,
+	PPU_CRSS0,
+	PPU_CRSS1,
+	PPU_CRSS2,
+	PPU_CRSS3,
+	OTRX_HSU0,
+	OTRX_HSU1,
+	OTRX_HSU2,
+	OTRX_HSU3,
+	OTRX_HSU4,
+	OTRX_HSU5,
+	OTRX_HSU6,
+	OTRX_HSU7,
+	OTRX_HSU8,
+	OTRX_HSU9,
+	OTRX_QSU0,
+	OTRX_QSU1,
+	OTRX_QSU2,
+	OTRX_QSU3,
+	OTRX_QSU4,
+	OTRX_QSU5,
+	OTRX_QSU6,
+	OTRX_QSU7,
+	SPU0,
+	ECPRI0,
+	ECPRI1,
+	ECPRI2,
+	ECPRI3,
+	ECPRI4,
+	ECPRI5,
+	TXU0,
+	TXU1,
+	TXU2,
+	TXU3,
+	TXU4,
+	TXU5,
+	TXU6,
+	TXU7,
+	TXU8,
+	TXU9,
+	TXU10,
+	TXU11,
+	TXU12,
+	TXU13,
+	TXU14,
+	TXU15,
+	IRING0,
+	IRING1,
+	IRING2,
+	IRING3,
+	SU_END,	// all new SU entries before this
+	MRTOS,
+} r2_suidx_t;
+
+#define	PPU_NUM_SUS		2
+#define	PPU_MXL_NUM_SUS		2
+#define	PPU_CRSS_NUM_SUS	4
+#define	OTRX_HSU_NUM_SUS	10
+#define	OTRX_QSU_NUM_SUS	8
+#define	SPU_NUM_SUS		1
+#define	ECPRI_NUM_SUS		6
+#define	TXU_NUM_SUS		16
+#define	IRING_NUM_SUS		4
+
+#define TOTALSUCOUNT	(PPU_NUM_SUS + PPU_MXL_NUM_SUS + PPU_CRSS_NUM_SUS + OTRX_HSU_NUM_SUS +\
+		OTRX_QSU_NUM_SUS + SPU_NUM_SUS + ECPRI_NUM_SUS + TXU_NUM_SUS + IRING_NUM_SUS)
+
+#define TOTALSUCOUNT_A0	(PPU_NUM_SUS + PPU_MXL_NUM_SUS + PPU_CRSS_NUM_SUS + OTRX_HSU_NUM_SUS +\
+		OTRX_QSU_NUM_SUS + SPU_NUM_SUS + ECPRI_NUM_SUS + TXU_NUM_SUS)
+
+#define TOTALSUCOUNT_B0	(PPU_NUM_SUS + PPU_MXL_NUM_SUS + PPU_CRSS_NUM_SUS + OTRX_HSU_NUM_SUS +\
+		OTRX_QSU_NUM_SUS + SPU_NUM_SUS + ECPRI_NUM_SUS + TXU_NUM_SUS + IRING_NUM_SUS)
+
+#define SUNAME(_num)	"SU"#_num
+
+struct r2_engname {
+	r2_engine_t etype;
+	const char *ename;
+};
+
+extern const char *engstr[];
+
+#endif

@@ -1,0 +1,57 @@
+diff --git a/bl31/bl31_main.c b/bl31/bl31_main.c
+index 92a2027dd..e13fde143 100644
+--- a/bl31/bl31_main.c
++++ b/bl31/bl31_main.c
+@@ -85,6 +85,8 @@ void bl31_setup(u_register_t arg0, u_register_t arg1, u_register_t arg2,
+ #endif /* CTX_INCLUDE_PAUTH_REGS */
+ }
+ 
++extern void primary_cpu_start_function();
++
+ /*******************************************************************************
+  * BL31 is responsible for setting up the runtime services for the primary cpu
+  * before passing control to the bootloader or an Operating System. This
+@@ -189,6 +191,8 @@ void __init bl31_prepare_next_image_entry(void)
+ 	}
+ #endif
+ 
++	primary_cpu_start_function();
++
+ 	/* Determine which image to execute next */
+ 	image_type = bl31_get_next_image_type();
+ 
+diff --git a/lib/psci/psci_common.c b/lib/psci/psci_common.c
+index cced2761f..9f49a8efd 100644
+--- a/lib/psci/psci_common.c
++++ b/lib/psci/psci_common.c
+@@ -754,6 +754,8 @@ int psci_validate_entry_point(entry_point_info_t *ep,
+ 	return rc;
+ }
+ 
++int  memory_operation_test_common();
++
+ /*******************************************************************************
+  * Generic handler which is called when a cpu is physically powered on. It
+  * traverses the node information and finds the highest power level powered
+@@ -839,6 +841,8 @@ void psci_warmboot_entrypoint(void)
+ 	 * in the reverse order to which they were acquired.
+ 	 */
+ 	psci_release_pwr_domain_locks(end_pwrlvl, parent_nodes);
++
++	memory_operation_test_common();
+ }
+ 
+ /*******************************************************************************
+diff --git a/plat/arm/board/raptor2/platform.mk b/plat/arm/board/raptor2/platform.mk
+index 74b74633b..2e9dae0ca 100644
+--- a/plat/arm/board/raptor2/platform.mk
++++ b/plat/arm/board/raptor2/platform.mk
+@@ -109,6 +109,7 @@ BL31_SOURCES		+=	${RAPTOR2_BL_COMMON_SOURCES}                \
+                                 ${RAPTOR2_BASE}/r2_security.c	            \
+ 				${RAPTOR2_BASE}/r2_topology.c	            \
+ 				${RAPTOR2_BASE}/r2_pm.c	                    \
++				${RAPTOR2_BASE}/r2_mem_test.c               \
+ 				drivers/cfi/v2m/v2m_flash.c		    \
+ 				plat/arm/common/arm_topology.c              \
+ 				plat/common/plat_psci_common.c              \
+ 

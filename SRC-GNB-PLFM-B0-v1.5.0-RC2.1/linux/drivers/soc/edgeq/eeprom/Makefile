@@ -1,0 +1,1 @@
+obj-$(CONFIG_EDGEQ_RAPTOR2_EEPROM)	+= raptor2_eeprom.o

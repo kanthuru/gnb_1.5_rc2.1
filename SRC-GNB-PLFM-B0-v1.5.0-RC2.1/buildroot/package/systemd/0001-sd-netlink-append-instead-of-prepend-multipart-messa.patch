@@ -1,0 +1,56 @@
+From 88b97a475753212a9a4852b12b3f04777e765dcf Mon Sep 17 00:00:00 2001
+From: Saurabh Karajgaonkar <saurabh.karajgaonkar@edgeq.io>
+Date: Thu, 3 Oct 2024 18:27:35 +0530
+Subject: [PATCH] sd-netlink: append instead of prepend multipart message
+
+- This patch is a backport of a mainline commit
+  52ceba53d3ccd3b57dcb795612de7886aaf928ca introduced in systemd v253.
+- It reverses the existing networkd enumeration sequence (decreasing
+  order of ifindex) to make enumeration of ethernet devices in order
+  of probing (increasing order of ifindex).
+- This helps in creating a ptp devices according to interface indexes.
+
+Signed-off-by: Saurabh Karajgaonkar <saurabh.karajgaonkar@edgeq.io>
+
+diff --git a/src/libsystemd/sd-netlink/netlink-socket.c b/src/libsystemd/sd-netlink/netlink-socket.c
+index 228e38df90..8c1a72b722 100644
+--- a/src/libsystemd/sd-netlink/netlink-socket.c
++++ b/src/libsystemd/sd-netlink/netlink-socket.c
+@@ -296,6 +296,7 @@ static int socket_recv_message(int fd, struct iovec *iov, uint32_t *ret_mcast_gr
+  */
+ int socket_read_message(sd_netlink *rtnl) {
+         _cleanup_(sd_netlink_message_unrefp) sd_netlink_message *first = NULL;
++        sd_netlink_message *last = NULL;
+         struct iovec iov = {};
+         uint32_t group = 0;
+         bool multi_part = false, done = false;
+@@ -341,6 +342,9 @@ int socket_read_message(sd_netlink *rtnl) {
+                         if (rtnl_message_get_serial(rtnl->rqueue_partial[i]) ==
+                             rtnl->rbuffer->nlmsg_seq) {
+                                 first = rtnl->rqueue_partial[i];
++                                last = first;
++                                while (last->next)
++                                        last = last->next;
+                                 break;
+                         }
+                 }
+@@ -399,9 +403,13 @@ int socket_read_message(sd_netlink *rtnl) {
+                         return r;
+ 
+                 /* push the message onto the multi-part message stack */
+-                if (first)
+-                        m->next = first;
+-                first = TAKE_PTR(m);
++                if (first) {
++                        last->next = TAKE_PTR(m);
++                        last = last->next;
++                } else {
++                        first = TAKE_PTR(m);
++                        last = first;
++                }
+         }
+ 
+         if (len > 0)
+-- 
+2.25.1
+

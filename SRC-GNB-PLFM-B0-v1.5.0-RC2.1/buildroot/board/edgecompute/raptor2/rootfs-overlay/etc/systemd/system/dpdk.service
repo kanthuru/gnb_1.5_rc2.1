@@ -1,0 +1,10 @@
+[Unit]
+Description=Service to setup DPDK hugepages environment
+
+[Service]
+User=root
+ExecStart=/usr/bin/python3 /usr/bin/dpdk-hugepages.py -p 32M --setup 512M
+Restart=no
+
+[Install]
+WantedBy=multi-user.target

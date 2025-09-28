@@ -1,0 +1,14 @@
+[Unit]
+Description=Service to Launch Raptor2 Time Sync Service
+Before=raptor2.service
+After=network-online.target
+Requires=network-online.target
+
+[Service]
+User=root
+WorkingDirectory=/root
+ExecStart=python3 '/etc/timesync_service.py'
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

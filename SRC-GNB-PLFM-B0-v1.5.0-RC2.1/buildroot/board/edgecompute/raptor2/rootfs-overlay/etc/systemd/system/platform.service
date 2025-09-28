@@ -1,0 +1,10 @@
+[Unit]
+Description=Service to setup Platform Specific environment
+
+[Service]
+User=root
+ExecStart=/bin/bash '/etc/setup_platform.sh'
+Restart=no
+
+[Install]
+WantedBy=multi-user.target

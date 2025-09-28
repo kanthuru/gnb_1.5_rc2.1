@@ -1,0 +1,69 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * EdgeQ Inc.
+ *
+ *
+ * Raptor2 Platform
+ */
+
+/dts-v1/;
+
+/ {
+        description = "EdgeQ Inc. Raptor2 FIT Image";
+        #address-cells = <2>;
+
+        images {
+                kernel {
+                        description = "Kernel";
+                        data = /incbin/("Image");
+                        type = "kernel";
+                        arch = "arm64";
+                        os = "linux";
+                        compression = "none";
+                        load = <0x00000008 0x12000000>;
+                        entry = <0x00000008 0x12000000>;
+                        hash {
+                                algo = "sha1";
+                        };
+                };
+		b0_hawk_fdt {
+                        description = "DTB";
+                        data = /incbin/("dts/edgeq/raptor2-B0-hawk.dtb");
+                        type = "flat_dt";
+                        arch = "arm64";
+                        os = "linux";
+                        compression = "none";
+                        load = <0x00000008 0x11000000>;
+                        hash {
+                                algo = "sha1";
+                        };
+                };
+		initrd {
+			description = "initrd for arm64";
+			data = /incbin/("rootfs.cpio.gz");
+			type = "ramdisk";
+			arch = "arm64";
+			os = "linux";
+			compression = "gzip";
+			load = <0x00000008 0x16000000>;
+			entry = <0x00000008 0x16000000>;
+			hash {
+				algo = "sha1";
+			};
+		};
+	};
+
+        configurations {
+                default = "standard";
+		b0_hawk {
+                        description = "Hawk Raptor2 Boot";
+                        kernel = "kernel";
+                        fdt = "b0_hawk_fdt";
+			ramdisk = "initrd";
+                        hash {
+                                algo = "sha1";
+                        };
+                };
+        };
+
+};

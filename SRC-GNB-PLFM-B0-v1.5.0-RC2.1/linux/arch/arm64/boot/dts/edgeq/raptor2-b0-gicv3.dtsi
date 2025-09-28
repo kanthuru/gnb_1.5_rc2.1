@@ -1,0 +1,24 @@
+/*
+ * EdgeQ Inc.
+ *
+ * Raptor2 Interrupt DTS (GICv3 configuration)
+ */
+
+/ {
+	gic: interrupt-controller@140000000 {
+		compatible = "arm,gic-v3";
+		#interrupt-cells = <3>;
+		#address-cells = <2>;
+		#size-cells = <2>;
+		ranges;
+		interrupt-controller;
+		reg =	<0x1 0x40000000 0x0 0x40000>, /* GICD */
+			<0x1 0x40040000 0x0 0x400000>; /* GICR */
+		interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+	};
+
+	sif_syscon: sif@69080000 {
+		compatible = "eq,raptor2-sif-syscon", "syscon";
+		reg = <0x0 0x69080000 0x0 0x810>;
+	};
+};

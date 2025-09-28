@@ -1,0 +1,254 @@
+/dts-v1/;
+
+/ {
+	interrupt-parent = <0x8001>;
+	#size-cells = <0x2>;
+	#address-cells = <0x2>;
+	compatible = "linux,dummy-virt";
+
+	aliases {
+		spi0 = &spi0;
+		spi1 = &spi1;
+		spi2 = &spi2;
+		spi3 = &spi3;
+	};
+
+	memory@400000000 {
+		reg = <0x00000004 0x00000000 0x2 0x00000000>;
+		device_type = "memory";
+	};
+
+	cpus {
+		#size-cells = <0x0>;
+		#address-cells = <0x1>;
+
+		cpu@0 {
+			reg = <0x0>;
+			compatible = "arm,armv8";
+			device_type = "cpu";
+			enable-method = "psci";
+		};
+
+		cpu@1 {
+			reg = <0x1>;
+			compatible = "arm,armv8";
+			device_type = "cpu";
+			enable-method = "psci";
+		};
+	};
+
+	psci {
+		compatible = "arm,psci-1.0", "arm,psci-0.2";
+		method = "smc";
+	};
+
+	chosen {
+		stdout-path = &uart0;
+	};
+
+	uart0: serial@70434000 {
+		clock-names = "uartclk";
+		reg = <0x0 0x70434000 0x0 0x1000>;
+		compatible = "ns16550a", "ns16550";
+		clock-frequency = <1500000000>; /* 1.5 GHz */
+		reg-shift = <3>;
+		reg-offset = <0x40>;    /* Base * 2 */
+	};
+
+	spiclk: virt_100mhz {
+		#clock-cells = <0>;
+		compatible = "fixed-clock";
+		clock-frequency = <750000000>;
+	};
+
+	spi0: spi@704d0000 {
+		compatible = "andestech,atcspi200";
+		reg = <0x0 0x704d0000 0x0 0x1000>;
+		num-cs = <1>;
+		/* interrupts = <0 12 4>; */
+		clocks = <&spiclk>;
+		#address-cells = <0x1>;
+		#size-cells = <0x0>;
+		reg-shift = <2>;
+		flash@0 {
+		     compatible = "jedec,spi-nor";
+		     spi-max-frequency = <80000000>;
+		     reg = <0>;
+		};
+	};
+
+	spi1: spi@70420000 {
+		compatible = "andestech,atcspi200";
+		reg = <0x0 0x70420000 0x0 0x1000>;
+		num-cs = <1>;
+		clocks = <&spiclk>;
+		#address-cells = <0x1>;
+		#size-cells = <0x0>;
+		reg-shift = <2>;
+		data-merge;
+	};
+
+	spi2: spi@70430000 {
+		compatible = "andestech,atcspi200";
+		reg = <0x0 0x70430000 0x0 0x1000>;
+		num-cs = <1>;
+		clocks = <&spiclk>;
+		#address-cells = <0x1>;
+		#size-cells = <0x0>;
+		reg-shift = <2>;
+	};
+
+	spi3: spi@68490000 {
+		compatible = "andestech,atcspi200";
+		reg = <0x0 0x68490000 0x0 0x1000>;
+		num-cs = <1>;
+		clocks = <&spiclk>;
+		#address-cells = <0x1>;
+		#size-cells = <0x0>;
+		reg-shift = <1>;
+	};
+
+	ether0: ethernet@3c040000 {
+		compatible = "edgeq,xgbe";
+		reg = <0x0 0x3C040000 0x0 0x40000>,     // XGMAC/XLGMAC addr
+		      <0x0 0x3C1C0000 0x0 0x40000>,     // XPCS/XLGPCS addr
+		      <0x0 0x3C2C0000 0x0 0x10000>;     // MISC addr
+		reg-names = "xgmac", "xpcs", "misc";
+		max-speed = <10000>;
+		phy-mode = "usxgmii";
+		phy-addr = <0x1D>;
+		phy-lane = <0>;
+		eth-link = <2>;
+		phy-rst-gpio = <2>;
+		status = "okay";
+	};
+
+	ether1: ethernet@3c080000 {
+		compatible = "edgeq,xgbe";
+		reg = <0x0 0x3C080000 0x0 0x40000>,     // XGMAC/XLGMAC addr
+		      <0x0 0x3C200000 0x0 0x40000>,     // XPCS/XLGPCS addr
+		      <0x0 0x3C2C0000 0x0 0x10000>;     // MISC addr
+		reg-names = "xgmac", "xpcs", "misc";
+		max-speed = <10000>;
+		phy-mode = "usxgmii";
+		phy-addr = <0x1D>;
+		phy-lane = <1>;
+		eth-link = <2>;
+		status = "okay";
+	};
+
+	ether2: ethernet@3c0c0000 {
+		compatible = "edgeq,xgbe";
+		reg = <0x0 0x3C0C0000 0x0 0x40000>,     // XGMAC/XLGMAC addr
+		      <0x0 0x3C240000 0x0 0x40000>,     // XPCS/XLGPCS addr
+		      <0x0 0x3C2C0000 0x0 0x10000>;     // MISC addr
+		reg-names = "xgmac", "xpcs", "misc";
+		max-speed = <10000>;
+		phy-mode = "usxgmii";
+		phy-addr = <0x1D>;
+		phy-lane = <2>;
+		eth-link = <2>;
+		status = "okay";
+	};
+
+	ether3: ethernet@3c100000 {
+		compatible = "edgeq,xgbe";
+		reg = <0x0 0x3C100000 0x0 0x40000>,     // XGMAC/XLGMAC addr
+		      <0x0 0x3C280000 0x0 0x40000>,     // XPCS/XLGPCS addr
+		      <0x0 0x3C2C0000 0x0 0x10000>;     // MISC addr
+		reg-names = "xgmac", "xpcs", "misc";
+		max-speed = <10000>;
+		phy-mode = "usxgmii";
+		phy-addr = <0x1D>;
+		phy-lane = <3>;
+		eth-link = <2>;
+		status = "okay";
+	};
+
+	ether4: ethernet@3c000000 {
+		compatible = "edgeq,xgbe";
+		reg = <0x0 0x3C000000 0x0 0x40000>,     // XGMAC/XLGMAC addr
+		      <0x0 0x3C140000 0x0 0x40000>,     // XPCS/XLGPCS addr
+		      <0x0 0x3C2C0000 0x0 0x10000>,     // MISC addr
+		      <0x0 0x3C2F0000 0x0 0x10000>;     // E56 addr; on link1 only
+		reg-names = "xgmac", "xpcs", "misc", "e56";
+		max-speed = <25000>;
+		#phy-mode = "usxgmii";
+		phy-addr = <0x1C>;
+		phy-lane = <0>;
+		eth-link = <1>;
+		phy-rst-gpio = <2>;
+		status = "okay";
+	};
+
+	i2cclk: virt_1500mhz {
+		#clock-cells = <0>;
+		compatible = "fixed-clock";
+		clock-frequency = <1500000000>;
+	};
+
+	i2c0: i2c@70400000 {
+		status = "okay";
+		compatible = "edgeq,raptor2-i2c";
+		reg = <0 0x70400000 0x0 0x1000>;
+		clocks = <&i2cclk>;
+		clock-frequency = <100000>;
+		address-cells = <1>;
+		#size-cells = <0>;
+		tpm = <29>;
+		t_sp = <3>;
+		t_sudat = <7>;
+		t_hddat = <10>;
+		t_sclhi = <245>;
+		reg-shift = <2>;
+	};
+
+	i2c1: i2c@70408000 {
+		status = "okay";
+		compatible = "edgeq,raptor2-i2c";
+		reg = <0 0x70408000 0x0 0x1000>;
+		clocks = <&i2cclk>;
+		clock-frequency = <100000>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		tpm = <29>;
+		t_sp = <3>;
+		t_sudat = <7>;
+		t_hddat = <10>;
+		t_sclhi = <245>;
+		reg-shift = <2>;
+	};
+
+	i2c2: i2c@70410000 {
+		status = "okay";
+		compatible = "edgeq,raptor2-i2c";
+		reg = <0 0x70410000 0x0 0x1000>;
+		clocks = <&i2cclk>;
+		clock-frequency = <100000>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		tpm = <29>;
+		t_sp = <3>;
+		t_sudat = <7>;
+		t_hddat = <10>;
+		t_sclhi = <245>;
+		reg-shift = <2>;
+	};
+
+	ciu: mmcclk-ciu {
+		#clock-cells = <0>;
+		compatible = "fixed-clock";
+		clock-frequency = <46000000>;
+	};
+
+	mmc: mmc@70500000 {
+		compatible = "edgeq,raptor2-sdhci";
+		reg = <0x0 0x70500000 0x0 0x1000>;
+		bus-width = <4>;
+		fifo-depth = <256>;
+		clocks = <&ciu>;
+		clock-names = "ciu";
+		reg-shift = <2>;
+		non-removable;
+	};
+};

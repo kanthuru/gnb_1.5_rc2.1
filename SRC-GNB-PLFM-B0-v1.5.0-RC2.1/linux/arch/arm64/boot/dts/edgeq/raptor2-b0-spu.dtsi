@@ -1,0 +1,87 @@
+/* SPDX-License-Identifier: GPL-2.0
+ *
+ * EdgeQ Inc.
+ *
+ * EdgeQ Raptor2 SU-DEV DTS
+ */
+
+/ {
+	spu {
+		compatible = "arm,edgeq-raptor2";
+		#address-cells = <2>;
+		#size-cells = <2>;
+
+		SPU_SU: spu_su0@68000000 {
+			compatible = "risc-v,spu";
+			device_type = "su";
+			#address-cells = <2>;
+			#size-cells = <2>;
+			ranges;
+			reg =	<0x0 0x68000000 0x0 0x00000000>,
+				<0x0 0x00110000 0x0 0x00010000>,
+				<0x0 0x00000000 0x0 0x00002000>,
+				<0x0 0x00000000 0x0 0x00002000>,
+				<0x0 0x00001000 0x0 0x00000100>,
+				<0x0 0x00002000 0x0 0x00000100>,
+				<0x0 0x00003000 0x0 0x00000100>,
+				<0x0 0x00004000 0x0 0x00000100>,
+				<0x0 0x00005000 0x0 0x00000100>,
+				<0x0 0x00000000 0x0 0x00000000>,
+				<0x0 0x00000000 0x0 0x00000000>,
+				<0x0 0x00000000 0x0 0x00000000>,
+				<0x0 0x00000000 0x0 0x00000000>,
+				<0x0 0x00000000 0x0 0x00000000>,
+				<0x0 0x00000000 0x0 0x00008000>,
+				<0x0 0x00080000 0x0 0x00010000>;
+			reg-names = "sudev_base", "cpu", "d-cache", "i-cache", "suinfo_offset",
+				"suconf_offset", "suau_offset", "sustats_offset", "sudbg_offset",
+				"lmem_addr_local", "lmem_addr_local_unc", "lmem_addr_local_wt",
+				"lmem_e1", "lmem_e1_b2", "ilmoffs", "dlmoffs";
+			enable-method = "reset-vector";
+			sudev = <&SUDEV>;
+			sumem = <&SUMEM>;
+			status = "okay";
+		};
+	};
+
+	rfgpio: rfgpio@68494000 {
+		status = "disabled";
+		compatible = "raptor2-b0-rfgpio";
+		reg = <0x0 0x68494000 0x0 0x1000>;
+		#gpio-cells = <2>;
+		gpio-controller;
+		ngpios = <32>;
+		gpio-line-names = "RESET_N",	  /* RG_GPIO PIN 0*/
+			"TX_OFF",                 /* RG_GPIO PIN 1*/
+			"RX_OFF",                 /* RG_GPIO PIN 2*/
+			"FEM2_DPD_SW_EN",         /* RG_GPIO PIN 3*/
+			"FEM4_TX_SW_EN",          /* RG_GPIO PIN 4*/
+			"FEM4_LNA_EN",            /* RG_GPIO PIN 5*/
+			"GPIO_PIN_6",             /* RG_GPIO PIN 6*/
+			"GPIO_PIN_7",             /* RG_GPIO PIN 7*/
+			"FEM3_DPD_SW_EN",         /* RG_GPIO PIN 8*/
+			"FEM3_LNA_EN",            /* RG_GPIO PIN 9*/
+			"GPIO_PIN_10",            /* RG_GPIO PIN 10*/
+			"FEM4_PAEN",              /* RG_GPIO PIN 11*/
+			"GPIO_PIN_12",            /* RG_GPIO PIN 12*/
+			"FEM3_PAEN",              /* RG_GPIO PIN 13*/
+			"FEM1_LNA_EN",            /* RG_GPIO PIN 14*/
+			"ADR0",                   /* RG_GPIO PIN 15*/
+			"GPIO_PIN_16",            /* RG_GPIO PIN 16*/
+			"GPIO_PIN_17",            /* RG_GPIO PIN 17*/
+			"GPIO_PIN_18",            /* RG_GPIO PIN 18*/
+			"GPIO_PIN_19",            /* RG_GPIO PIN 19*/
+			"GPIO_PIN_20",            /* RG_GPIO PIN 20*/
+			"LDO_EN",                 /* RG_GPIO PIN 21*/
+			"FEM1_DPD_SW_EN",         /* RG_GPIO PIN 22*/
+			"FEM1_PAEN",              /* RG_GPIO PIN 23*/
+			"FEM2_TX_SW_EN",          /* RG_GPIO PIN 24*/
+			"FEM2_LNA_EN",            /* RG_GPIO PIN 25*/
+			"FEM2_PAEN",              /* RG_GPIO PIN 26*/
+			"FEM1_TX_SW_EN",          /* RG_GPIO PIN 27*/
+			"GPIO_PIN_28",            /* RG_GPIO PIN 28*/
+			"ADR1",                   /* RG_GPIO PIN 29*/
+			"FEM4_DPD_SW_EN",         /* RG_GPIO PIN 30*/
+			"FEM3_TX_SW_EN";          /* RG_GPIO PIN 31*/
+	};
+};

@@ -1,0 +1,80 @@
+if TARGET_EQ_RAPTOR2 || TARGET_EQ_RAPTOR2_FPGA || TARGET_EQ_RAPTOR2_SINGLE_PPU_CLUSTER || TARGET_EQ_RAPTOR2_A0_EVB || TARGET_EQ_RAPTOR2_A0_PEGASUS || TARGET_EQ_RAPTOR2_B0_FPGA || TARGET_EQ_RAPTOR2_B0_TITAN || TARGET_EQ_RAPTOR2_B0_HAWK || TARGET_EQ_RAPTOR2_B0_PEGASUS
+
+config SYS_BOARD
+	default "raptor2"
+
+config SYS_VENDOR
+	default "edgeq"
+
+config SYS_SOC
+	default "raptor2"
+
+config SYS_CONFIG_NAME
+	default "edgeq_raptor2"
+
+config SYS_TEXT_BASE
+	default 0x90000000 if SPL
+	default 0x90000000
+
+config SPL_TEXT_BASE
+	default 0x91000000
+
+config BOARD_SPECIFIC_OPTIONS
+	def_bool y
+	imply CMD_DHCP
+	imply CMD_EXT2
+	imply CMD_EXT4
+	imply CMD_FAT
+	imply CMD_FS_GENERIC
+	imply CMD_NET
+	imply CMD_PING
+	imply CMD_DM
+	imply CMD_MMC
+#	imply CMD_GPT
+#	imply CMD_I2C
+#	imply CMD_NAND
+#	imply CMD_PCI
+#	imply CMD_USB
+#	imply CMD_CACHE
+	imply DOS_PARTITION
+	imply EFI_PARTITION
+	imply ISO_PARTITION
+	imply BOARD_LATE_INIT
+	imply OF_BOARD_SETUP
+	imply SMP
+#	imply PCIE_ECAM_GENERIC
+	imply NVME
+	imply SPL_RAM_SUPPORT
+	imply SPL_RAM_DEVICE
+
+config CMD_RAPTOR_FUSE
+       bool "Enable raptor efuse"
+       depends on ARCH_RAPTOR2
+       default n
+       help
+         enables raptor soc fuse commands
+
+config CMD_SET_VDD
+        bool "Enable setvdd cmd"
+        default n
+        help
+          Support for PMIC set vdd for buck2
+config I2C_DCTCXO
+	   bool "Probe DCTCXO on I2C bus"
+	   default n
+	   help
+		  Set to y only if DCTCXO exists on the I2C bus
+
+config CMD_SET_AVS
+        bool "Enable set_avs cmd"
+        default n
+        help
+          Support for PMIC set AVS enable
+
+config CMD_BSS_REG_READ_WRITE
+        bool "Enable bss_reg read/write cmd"
+        default n
+        help
+          Support for BSS reg read/write which are not accessible
+	  from e1
+endif

@@ -1,0 +1,12 @@
+[Unit]
+Description=Service to Launch Monit Service
+
+[Service]
+Type=forking
+User=root
+ExecStart=/bin/monit
+RemainAfterExit=true
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

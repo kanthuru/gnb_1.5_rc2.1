@@ -1,0 +1,56 @@
+* Raptor PCIe Endpoint Controller DT description
+
+Required properties:
+- compatible: Should contain "raptor2-pcie-ep"
+- reg: sixregister ranges as listed in the reg-names property
+- reg-names: Must include the following names
+      - "dbi"
+      - "dbi2"
+      - "atu"
+      - "addr_space"
+      - "br_up"
+      - "lk_reg"
+
+dma-coherent: Indicates whether DMA operations are coherent.
+num-lanes: Number of PCIe lanes used by the endpoint.
+status: Status of the device, either "disabled" or "enabled".
+dma-ch: Number of DMA channels available.
+max-ch-mem: Maximum memory size for each DMA channel.
+ddr-addr: DDR address for the device.
+ddr-size: DDR size for the device.
+dma-ll-addr: DDR address offset for the DMA Linked List registers.
+dma-ll-size: Size of the DMA Linked List.
+hdma-reg-addr: HDMA address for the device.
+hdma-reg-size: HDMA size for the device.
+ep-off-addr: DDR address offset for the endpoint global region.
+ep-off-size: Size of the endpoint global region.
+
+Optional Property:
+- max-functions: Maximum number of functions that can be configured (default 1).
+
+
+
+pcie_ep0: pcie-ep@3C600000 {
+		compatible = "raptor2-pcie-ep";
+		reg = <0x0 0x3C600000 0x0 0x100000>, /* IP reg 1 DBI SZ 1MB */
+				<0x0 0x3C800000 0x0 0x100000>, /* IP reg 2 DBI2 SZ 1MB */
+				<0x0 0x3C900000 0x0 0x80000>, /* IP reg ATU SZ 512K */
+				<0x40 0x00000000 0x1 0x00000000>, /* Config space 256GB SZ 4GB */
+				<0x0 0x3CB00000 0x0 0x20000>, /* Port Bringup Configuration */
+				<0x0 0x3C400000 0x0 0x40000>; /* Link4 Configuration */
+		reg-names = "dbi", "dbi2", "atu", "addr_space", "br_up", "lk_reg";
+		dma-coherent;
+		raptor2_early_init;
+		num-lanes = <4>;
+		status = "disabled";
+		dma-ch = <0x10>; /*16 DMA Channels R/W*/
+		max-ch-mem = <0x8000000>; /*128MB~96MB with some headroom*/
+		ddr-addr = <0x8 0x00000000>; /*DDR Address-BAR2*/
+		ddr-size = <0x2 0x00000000>; /*DDR Size-BAR2 8GB*/
+		dma-ll-addr = <0x8 0xDAC00000>; /*DDR ADR + DMA LL Reg Offset*/
+		dma-ll-size = <0x8000000>; /*128MB*/
+		hdma-reg-addr = <0x3C980000>; /*HDMA Address-BAR2*/
+		hdma-reg-size = <0x80000>; /*HDMA Size-BAR0 512KB*/
+		ep-off-addr = <0xF80000>; /*DDR ADDR + EP Glb Region Offset*/
+		ep-off-size	= <0x40000>; /*DDR ADDR + EP Glb Region Offset 256KB*/
+	};

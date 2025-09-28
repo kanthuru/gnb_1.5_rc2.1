@@ -1,0 +1,60 @@
+Buildroot compilation steps
+***************************
+
+1. Select configuration
+$ make menuconfig
+
+Follow below instructions:
+
+Select Target options -> Target Architecture -> Aarch64 (Little endian) 
+Select Toolchain -> Toolchain type -> External toolchain. The overall build time will be reduced as we are not going to compile the toolchain again. 
+Select Toolchain -> Toolchain  -> Arm aarch64 2019.12 
+Select Toolchain -> Toolchain origin -> Toolchain to be downloaded and installed 
+Select Target packages -> Networking applications -> dropbear 
+Select Target packages -> Networking applications -> openssh
+Select Target packages -> Miscellaneous -> haveged
+Select Toolchain -> Copy gdb server to the Target (Enables BR2_TOOLCHAIN_EXTERNAL_GDB_SERVER_COPY, which will copy the gdbserver included with the external toolchain to the target.)
+
+NOTE : Additional packages can be added as per requirement.
+
+2. Save and compile
+
+$ make -j8 
+
+3. Create uramdisk image
+
+This is simple method used to create uramdisk. As this does not use gzip, system will boot quickly.
+
+$ cd output/images/ 
+$ mkdir rootfs 
+$ tar -xf rootfs.tar -C rootfs/ 
+$ genext2fs -b 65535 -N 1024 -U -d ./rootfs/ ./rootfs-br.img
+$ mkimage -A arm64 -O linux -T ramdisk -d ./rootfs-br.img ./uRamdisk-br.img
+
+4. Unpack, modify and re-pack uramdisk
+
+The uramdisk.image.gz image contains two parts:
+  a 64 byte U-Boot header
+  a (usually gzip compressed) ramdisk image
+
+To modify the contents you have to extract, uncompress and mount the ramdisk image. This can be done as follows:
+
+Extract compressed ramdisk image (ramdisk.image)
+
+$ dd if= uRamdisk-br.img bs=64 skip=1 of=rootfs-br.img
+21876+1 records in
+21876+1 records out
+
+Mount ramdisk image
+
+$ sudo mount -o loop rootfs-br.img /mnt/tmp
+
+Now you can add, remove, or modify files in the /mnt/tmp directory. If you are done, you can re-pack the ramdisk into a U-Boot image:
+
+Unmount ramdisk image:
+
+$ sudo umount /mnt/tmp
+
+Create new U-Boot image (new-uRamdisk)
+
+$ mkimage -A arm64 -O linux -T ramdisk -d ./rootfs-br.img ./uRamdisk-br.img

@@ -1,0 +1,8 @@
+obj-$(CONFIG_EDGEQ_RAPTOR2)		+= sumgr/
+obj-$(CONFIG_EDGEQ_RAPTOR2_LOGGER)	+= logger/
+obj-$(CONFIG_EDGEQ_RAPTOR2_WLAN_SHM)	+= shmtest/
+obj-$(CONFIG_EDGEQ_RAPTOR2_EXMGR)	+= exmgr/
+obj-$(CONFIG_EDGEQ_RAPTOR2_TEST_WLAN)	+= test_wlan/
+obj-$(CONFIG_EDGEQ_RAPTOR2_EEPROM)	+= eeprom/
+obj-$(CONFIG_EDGEQ_RAPTOR2_BSS_CMDQ)	+= bsscmdq/
+obj-$(CONFIG_EDGEQ_RAPTOR2_HEARTBEAT)   += heartbeat/

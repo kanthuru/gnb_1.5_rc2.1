@@ -1,0 +1,18 @@
+# SPDX-License-Identifier: GPL-2.0-only
+#
+# EdgeQ network device
+#
+
+config EDGEQ_XGBE
+	tristate "EdgeQ 10GbE Ethernet driver"
+	default y
+	depends on OF_NET && OF_ADDRESS && HAS_IOMEM
+	depends on ARM64 || COMPILE_TEST
+        select MII
+        select MDIO_XPCS
+        select PAGE_POOL
+	select CRC32
+	imply PTP_1588_CLOCK
+	help
+	  This is the driver for the XGMAC Ethernet IP block found on EdgeQ
+	  Raptor platforms.

@@ -1,0 +1,138 @@
+if ARCH_RAPTOR2
+
+config SYS_VENDOR
+        default "edgeq"
+
+config RAPTOR_FAMILY
+	def_bool y
+
+choice
+	prompt "EdgeQ chip version select"
+	optional
+
+config TARGET_EQ_RAPTOR2_A0
+	bool "Support EdgeQ Raptor 2 A0 Silicon"
+	help
+	  Support for EdgeQ Raptor 2 A0 Silicon
+
+config TARGET_EQ_RAPTOR2_B0
+	bool "Support EdgeQ Raptor 2 B0 Silicon"
+	help
+	  Support for EdgeQ Raptor 2 B0 Silicon.
+endchoice
+
+if TARGET_EQ_RAPTOR2_A0
+
+choice
+	prompt "EdgeQ A0 board select"
+	optional
+
+config TARGET_EQ_RAPTOR2
+	bool "Support EdgeQ Raptor 2 SoC"
+	select ARCH_SUPPORT_TFABOOT
+	select SUPPORT_SPL
+	select BOARD_EARLY_INIT_F
+	select BOARD_LATE_INIT
+	select MISC_INIT_R
+	help
+	  Support for EdgeQ Raptor 2 board.
+
+config TARGET_EQ_RAPTOR2_FPGA
+	bool "Support EdgeQ Raptor 2 FPGA"
+	select ARCH_SUPPORT_TFABOOT
+	select SUPPORT_SPL
+	select BOARD_EARLY_INIT_F
+	select BOARD_LATE_INIT
+	select MISC_INIT_R
+	help
+	  Support for EdgeQ Raptor 2 fpga board.
+
+config TARGET_EQ_RAPTOR2_SINGLE_PPU_CLUSTER
+	bool "Support EdgeQ Raptor 2 Single PPU Cluster"
+	select ARCH_SUPPORT_TFABOOT
+	select SUPPORT_SPL
+	select BOARD_EARLY_INIT_F
+	select BOARD_LATE_INIT
+	select MISC_INIT_R
+	help
+	  Support for EdgeQ Raptor Single PPU cluster board.
+
+config TARGET_EQ_RAPTOR2_A0_EVB
+	bool "Support EdgeQ Raptor 2 A0 EVB"
+	select ARCH_SUPPORT_TFABOOT
+	select SUPPORT_SPL
+	select BOARD_EARLY_INIT_F
+	select BOARD_LATE_INIT
+	select MISC_INIT_R
+	help
+	  Support for EdgeQ Raptor 2 A0 EVB
+
+config TARGET_EQ_RAPTOR2_A0_PEGASUS
+	bool "Support EdgeQ Raptor 2 A0 Pegasus"
+	select ARCH_SUPPORT_TFABOOT
+	select SUPPORT_SPL
+	select BOARD_EARLY_INIT_F
+	select BOARD_LATE_INIT
+	select MISC_INIT_R
+	help
+	  Support for EdgeQ Raptor 2 A0 Pegasus board
+	  This option assumes uboot is configured to use the
+	  bss UART (ns16550) for the serial console.
+endchoice
+
+endif
+
+if TARGET_EQ_RAPTOR2_B0
+
+choice
+	prompt "EdgeQ B0 board select"
+	optional
+
+config TARGET_EQ_RAPTOR2_B0_FPGA
+	bool "Support EdgeQ Raptor 2 B0 FPGA"
+	select ARCH_SUPPORT_TFABOOT
+	select SUPPORT_SPL
+	select BOARD_EARLY_INIT_F
+	select BOARD_LATE_INIT
+	select MISC_INIT_R
+	help
+	  Support for EdgeQ Raptor 2 B0 fpga board.
+
+config TARGET_EQ_RAPTOR2_B0_TITAN
+	bool "Support EdgeQ Raptor 2 B0 Titan"
+	select ARCH_SUPPORT_TFABOOT
+	select SUPPORT_SPL
+	select BOARD_EARLY_INIT_F
+	select BOARD_LATE_INIT
+	select MISC_INIT_R
+	help
+	  Support for EdgeQ Raptor 2 B0 Titan board.
+
+config TARGET_EQ_RAPTOR2_B0_HAWK
+	bool "Support EdgeQ Raptor 2 B0 Hawk"
+	select ARCH_SUPPORT_TFABOOT
+	select SUPPORT_SPL
+	select BOARD_EARLY_INIT_F
+	select BOARD_LATE_INIT
+	select MISC_INIT_R
+	help
+	  Support for EdgeQ Raptor 2 B0 Hawk board.
+	  This option assumes uboot is configured to use the
+	  bss UART (ns16550) for the serial console.
+
+config TARGET_EQ_RAPTOR2_B0_PEGASUS
+	bool "Support EdgeQ Raptor 2 B0 Pegasus"
+	select ARCH_SUPPORT_TFABOOT
+	select SUPPORT_SPL
+	select BOARD_EARLY_INIT_F
+	select BOARD_LATE_INIT
+	select MISC_INIT_R
+	help
+	  Support for EdgeQ Raptor 2 B0 Pegasus board.
+endchoice
+
+endif
+
+source "board/edgeq/raptor2/Kconfig"
+
+endif

@@ -1,0 +1,45 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * EdgeQ Inc.
+ *
+ * EdgeQ Raptor2 DTSI for WLAN
+ */
+
+/ {
+	wlan {
+                compatible = "arm,edgeq-raptor2,wlan";
+                #address-cells = <2>;
+                #size-cells = <2>;
+		interrupt-parent = <&gic>;
+		#interrupt-cells = <3>;
+		interrupts =	<GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH>,
+				<GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH>,
+				<GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH>;
+		interrupt-names = 	"cci_cmd_int", "cci_evt_int",
+					"fatal_err_int";
+
+		RADIO0: r2wlan_radio0@00000000 {
+			compatible = "arm,edgeq-raptor2,wlan,radio";
+			reg =	<0x0 0x00000000 0x0 0x00000000>;
+			interrupt-parent = <&gic>;
+			#interrupt-cells = <3>;
+			interrupts =	<GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH>,
+					<GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH>,
+					<GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>,
+					<GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>,
+					<GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH>,
+					<GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH>,
+					<GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH>,
+					<GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH>,
+					<GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH>,
+					<GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH>,
+					<GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH>;
+			interrupt-names =	"rx_pkt_int0", "rx_pkt_int1", "rx_pkt_int2",
+						"rx_pkt_int3", "rx_status_int", "tx_pkt_int",
+						"tx_status_int0", "tx_status_int1", "tx_status_int2",
+						"tx_status_int3", "tx_acctg_int";
+			label = "wlan-radio-0";
+			status = "ok";
+		};
+	};
+};

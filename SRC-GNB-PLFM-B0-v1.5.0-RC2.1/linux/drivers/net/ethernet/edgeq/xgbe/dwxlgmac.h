@@ -1,0 +1,42 @@
+/* SPDX-License-Identifier: GPL-2.0 */
+/*
+ * Copyright (c) 2020 Synopsys, Inc. and/or its affiliates.
+ * Synopsys DesignWare XLGMAC definitions.
+ */
+
+#ifndef __DWXLGMAC2_H__
+#define __DWXLGMAC2_H__
+
+/* MAC Registers */
+#define XLGMAC_CONFIG_SS_MASK		GENMASK(30, 28)
+#define XLGMAC_CONFIG_SS_SHIFT		28
+#define XLGMAC_CONFIG_SS_40G		(0x0 << XLGMAC_CONFIG_SS_SHIFT)
+#define XLGMAC_CONFIG_SS_25G		(0x1 << XLGMAC_CONFIG_SS_SHIFT)
+#define XLGMAC_CONFIG_SS_50G		(0x2 << XLGMAC_CONFIG_SS_SHIFT)
+#define XLGMAC_CONFIG_SS_100G		(0x3 << XLGMAC_CONFIG_SS_SHIFT)
+#define XLGMAC_CONFIG_SS_10G		(0x4 << XLGMAC_CONFIG_SS_SHIFT)
+#define XLGMAC_CONFIG_SS_2500		(0x6 << XLGMAC_CONFIG_SS_SHIFT)
+#define XLGMAC_CONFIG_SS_1000		(0x7 << XLGMAC_CONFIG_SS_SHIFT)
+#define XLGMAC_RXQ_ENABLE_CTRL0		0x00000140
+#define XLGMAC_RXQ_CTRL0		0x00000150
+#define XLGMAC_MCBCQEN			BIT(15)
+#define XLGMAC_MCBCQ_MASK		GENMASK(11, 8)
+#define XLGMAC_MCBCQ_SHIFT		8
+#define XLGMAC_RXQ_CTRL1		0x00000154
+#define XLGMAC_PTPQ_MASK		GENMASK(3, 0)
+#define XLGMAC_PTPQ_SHIFT		0
+#define XLGMAC_RXQ_PRI_CTRL0		0x00000160
+#define XLGMAC_RXQ_PRI_CTRL1		0x00000164
+#define XLGMAC_PSRQ(x)			GENMASK((x) * 8 + 7, (x) * 8)
+#define XLGMAC_PSRQ_SHIFT(x)		((x) * 8)
+
+/* DMA Registers */
+#define XLGMAC_RDWS				GENMASK(26, 24)
+#define XLGMAC_RDTS				GENMASK(23, 20)
+#define XLGMAC_RDTS_SHIFT		(20)
+
+
+/* Feature0 register */
+#define XLGMAC_HWFEAT_DVLAN		BIT(28)
+
+#endif /* __DWXLGMAC2_H__ */

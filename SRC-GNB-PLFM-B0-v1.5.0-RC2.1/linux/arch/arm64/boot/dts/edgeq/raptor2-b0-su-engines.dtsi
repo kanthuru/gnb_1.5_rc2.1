@@ -1,0 +1,19 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * EdgeQ Inc.
+ *
+ *
+ * Raptor2 SU Engines Include File
+ * To be included in main DTB for Raptor-2
+ */
+
+#include "raptor2-b0-su-common.dtsi"
+#include "raptor2-b0-ppu.dtsi"
+#include "raptor2-b0-ppu-mxl.dtsi"
+#include "raptor2-b0-ppu-crss.dtsi"
+#include "raptor2-b0-otrx-hsu.dtsi"
+#include "raptor2-b0-otrx-qsu.dtsi"
+#include "raptor2-b0-spu.dtsi"
+#include "raptor2-b0-ecpri.dtsi"
+#include "raptor2-b0-txu.dtsi"
+#include "raptor2-b0-iring.dtsi"

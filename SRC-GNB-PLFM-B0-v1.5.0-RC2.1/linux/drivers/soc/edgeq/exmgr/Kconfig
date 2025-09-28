@@ -1,0 +1,7 @@
+# Raptor-2
+config EDGEQ_RAPTOR2_EXMGR
+	bool "Support for EdgeQ Raptor2 Exception Manager"
+	default y
+	depends on ARCH_EDGEQ
+	help
+	Enables Exception Handler Module

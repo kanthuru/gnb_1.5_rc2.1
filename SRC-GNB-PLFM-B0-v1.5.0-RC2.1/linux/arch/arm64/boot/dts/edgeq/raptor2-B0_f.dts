@@ -1,0 +1,97 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * EdgeQ Inc.
+ *
+ *
+ * Raptor2 Platform
+ */
+
+/dts-v1/;
+
+#include "raptor2-B0-titan.dts"
+
+/ {
+	compatible = "edgeq,b0-titan";
+	reserved-memory {
+		#address-cells = <2>;
+		#size-cells = <2>;
+		ranges;
+	};
+};
+
+&edgeq_uio0 {
+	status = "disabled";
+};
+
+&bss_serial1 {
+	status = "disabled";
+};
+
+&spi1 {
+	status = "disabled";
+};
+
+&spi2 {
+	status = "disabled";
+};
+
+&spi3 {
+	status = "disabled";
+};
+
+&spi4 {
+	status = "disabled";
+};
+
+&i2c0 {
+	status = "disabled";
+};
+
+&i2c1 {
+	status = "disabled";
+};
+
+&i2c2 {
+	status = "disabled";
+};
+
+&ether0 {
+	edgeq,pmd-num-chans = <0>;
+	status = "ok";
+};
+
+&ether1 {
+	status = "disabled";
+};
+
+&ether2 {
+	status = "disabled";
+};
+
+&ether3 {
+	status = "disabled";
+};
+
+&ether4 {
+	status = "disabled";
+};
+
+&usb1 {
+	status = "disabled";
+};
+
+&crss {
+	status = "disabled";
+};
+
+&stmr {
+	status = "disabled";
+};
+
+&rfgpio {
+	status = "disabled";
+};
+
+&socgpio {
+	status = "disabled";
+};

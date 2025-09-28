@@ -1,0 +1,18 @@
+This is a sample driver to show how we can initialize a device and make use of
+interrupts to communicate between Linux and Zephyr.
+
+Example of device tree node:
+
+doorbell0: raptor2_doorbell@deadbeef {
+	compatible = "edgeq,raptor2-doorbell";
+	reg = <0x00 0xdeadbeef 0x0 0x01>;
+	interrupts = <GIC_SPI 254 IRQ_TYPE_LEVEL_HIGH>, /* Linux IRQ */
+		     <GIC_SPI 255 IRQ_TYPE_LEVEL_HIGH>; /* Zephyr IRQ */
+	zirq = <255>;
+	label = "DOORBELL_0";
+	status = "okay";
+};
+
+Configurations needed to enable driver:
+
+CONFIG_RAPTOR2_DOORBELL=y

@@ -1,0 +1,512 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * EdgeQ Inc.
+ *
+ * EdgeQ Raptor2 BSS DTSi
+ */
+#include <dt-bindings/gpio/gpio.h>
+
+/ {
+
+	spiclk: virt_750mhz {
+		#clock-cells = <0>;
+		compatible = "fixed-clock";
+		clock-frequency = <750000000>;
+	};
+
+	rfspiclk: virt_300mhz {
+		#clock-cells = <0>;
+		compatible = "fixed-clock";
+		clock-frequency = <300000000>;
+	};
+
+	bss_uart_clk: bss-uart-clk {
+		compatible = "fixed-clock";
+		#clock-cells = <0>;
+		/*clock-frequency = <9216000>; FPGA */
+		clock-frequency = <1843200>; /* Divisor = (1843200 / (19200 * 16)) = 6 */
+	};
+
+	spi0: spi@6E4D0000 {
+		status = "disabled";
+		compatible = "andestech,atcspi200";
+		reg = <0x0 0x6E4D0000 0x0 0x1000>;
+		num-cs = <1>;
+		interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
+		clocks = <&spiclk>;
+		spi-cpol;
+		spi-cpha;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg-shift = <2>;
+		nor_flash_quirk;
+
+/*
+		flash@0 {
+			compatible = "jedec,spi-nor";
+			spi-max-frequency = <80000000>;
+			reg = <0>;
+		};
+		spidev0: spidev@0 {
+			status = "okay";
+			compatible = "linux,spidev";
+			reg = <0>;
+			spi-max-frequency = <80000000>;
+		};
+*/
+	};
+
+	spi1: spi@6E420000 {
+		status = "disabled";
+		compatible = "andestech,atcspi200";
+		reg = <0x0 0x6E420000 0x0 0x1000>;
+		reg-names = "spi1";
+		num-cs = <1>;
+		interrupts = <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
+		clocks = <&spiclk>;
+		spi-hw-workaround;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg-shift = <2>;
+		pinctrl-names = "default", "gpio_line", "spim1_cs_line";
+		pinctrl-0 = <&state_spim1>;
+		pinctrl-1 = <&state_gpio_line>;
+		pinctrl-2 = <&state_spi_line>;
+
+		spidev1: spidev@0 {
+			status = "okay";
+			compatible = "linux,spidev";
+			reg = <0>;
+			spi-max-frequency = <80000000>;
+		};
+	};
+
+	spi2: spi@6E430000 {
+		status = "disabled";
+		compatible = "andestech,atcspi200";
+		reg = <0x0 0x6E430000 0x0 0x1000>;
+		num-cs = <1>;
+		interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
+		clocks = <&spiclk>;
+		spi-cpol;
+		spi-cpha;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg-shift = <2>;
+
+		spidev2: spidev@0 {
+			status = "okay";
+			compatible = "linux,spidev";
+			reg = <0>;
+			spi-max-frequency = <80000000>;
+		};
+	};
+
+	spi3: spi@68490000 {
+		status = "disabled";
+		compatible = "andestech,atcspi200";
+		reg = <0x0 0x68490000 0x0 0x1000>;
+		num-cs = <1>;
+		//interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
+		clocks = <&rfspiclk>;
+		spi-cpol;
+		spi-cpha;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg-shift = <1>;
+		read_cs_toggle_quirk;
+		rfi_dev_quirk;
+
+		spidev3: spidev@0 {
+			status = "okay";
+			compatible = "linux,spidev";
+			reg = <0>;
+			spi-max-frequency = <50000000>;
+		};
+	};
+
+	spi4: spi@68491000 {
+		status = "disabled";
+		compatible = "andestech,atcspi200";
+		reg = <0x0 0x68491000 0x0 0x1000>;
+		num-cs = <1>;
+		//interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
+		clocks = <&rfspiclk>;
+		spi-cpol;
+		spi-cpha;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg-shift = <1>;
+		read_cs_toggle_quirk;
+		rfi_dev_quirk;
+
+		spidev4: spidev@0 {
+			status = "okay";
+			compatible = "linux,spidev";
+			reg = <0>;
+			spi-max-frequency = <50000000>;
+		};
+	};
+
+	bss_serial0: bss-serial@6E450000 {
+		status = "disabled";
+		device_type = "serial";
+		compatible = "ns16550a";
+		reg = <0 0x6E450000 0x0 0x1000>;
+		reg-shift = <3>;
+		reg-offset = <0x40>;
+                reg-io-width = <4>;
+                clocks = <&bss_uart_clk>;
+                /*clock-frequency = <9216000>; FPGA */
+                clock-frequency = <1843200>;
+		interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
+	};
+
+	bss_serial1: bss-serial@6E460000 {
+		status = "disabled";
+		device_type = "serial";
+		compatible = "ns16550a";
+		reg = <0 0x6E460000 0x0 0x1000>;
+		reg-shift = <3>;
+		reg-offset = <0x40>;
+                reg-io-width = <4>;
+                clocks = <&bss_uart_clk>;
+                /*clock-frequency = <9216000>; FPGA */
+                clock-frequency = <1843200>;
+		interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
+
+		gnss {
+			status = "disabled";
+			compatible = "u-blox,neo-8";
+			current-speed = <9600>;
+			pinctrl-names = "sif_input";
+			pinctrl-0 = <&state_sif_in>;
+			gnss-gpio = <&socgpio_pinctrl 21 0>;
+		};
+	};
+
+	bss_serial2: bss-serial@6E470000 {
+		status = "disabled";
+		device_type = "serial";
+		compatible = "ns16550a";
+		reg = <0 0x6E470000 0x0 0x1000>;
+		reg-shift = <3>;
+		reg-offset = <0x40>;
+                reg-io-width = <4>;
+                clocks = <&bss_uart_clk>;
+                /*clock-frequency = <9216000>; FPGA */
+                clock-frequency = <1843200>;
+		interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
+	};
+
+	edacmc: memory-controller@6f7fe000 {
+		status = "disabled";
+		compatible = "edgeq,raptor2-ddrc";
+		reg = <0 0x6f7fe000 0x0 0x1000>;
+		interrupts = <GIC_SPI 604 IRQ_TYPE_LEVEL_HIGH>,
+			     <GIC_SPI 605 IRQ_TYPE_LEVEL_HIGH>;
+        };
+
+	i2cclk: virt_100mhz {
+		#clock-cells = <0>;
+		compatible = "fixed-clock";
+		clock-frequency = <750000000>;
+	};
+
+	i2c0: i2c@6E400000 {
+		status = "disabled";
+		compatible = "edgeq,raptor2-i2c";
+		reg = <0 0x6E400000 0x0 0x1000>;
+		reg-shift = <2>;
+		interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
+		clocks = <&i2cclk>;
+		clock-frequency = <100000>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		tpm = <20>;
+		t_sp = <2>;
+		t_sudat = <5>;
+		t_hddat = <7>;
+		t_sclhi = <174>;
+	};
+
+	i2c1: i2c@6E4A0000 {
+		status = "disabled";
+		compatible = "edgeq,raptor2-i2c";
+		reg = <0 0x6E4A0000 0x0 0x1000>;
+		reg-shift = <2>;
+		interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
+		clocks = <&i2cclk>;
+		clock-frequency = <100000>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		tpm = <20>;
+		t_sp = <2>;
+		t_sudat = <5>;
+		t_hddat = <7>;
+		t_sclhi = <174>;
+	};
+
+	i2c2: i2c@6E410000 {
+		status = "disabled";
+		compatible = "edgeq,raptor2-i2c";
+		reg = <0 0x6E410000 0x0 0x1000>;
+		reg-shift = <2>;
+		interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
+		clocks = <&i2cclk>;
+		clock-frequency = <100000>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		tpm = <20>;
+		t_sp = <2>;
+		t_sudat = <5>;
+		t_hddat = <7>;
+		t_sclhi = <174>;
+	};
+
+	dctcxo0: dctcxo {
+		status = "disabled";
+		compatible = "sitime,si5357";
+		bus = <0x0>;
+		addr = <0x60>;
+	};
+
+	mmcclk_core: virt_46mhz {
+		#clock-cells = <0>;
+		compatible = "fixed-clock";
+		clock-frequency = <46000000>;
+	};
+
+	sdmmcclk_core: virt_23mhz {
+		#clock-cells = <0>;
+		compatible = "fixed-clock";
+		clock-frequency = <23000000>;
+	};
+
+	emmc: mmc@6E500000 {
+		status = "disabled";
+		compatible = "edgeq,raptor2-sdhci";
+		reg = <0x0 0x6E500000 0x0 0x1000>;
+		interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
+		clocks = <&sdmmcclk_core>;
+		clock-names = "core";
+		bus-width = <8>;
+		fifo-depth = <0x100>;
+		reg-shift = <2>;
+		non-removable;
+		no-sd;
+		no-sdio;
+		mmc_coherent;
+		mmc_noncoherent;
+		raptor2_b0;
+	};
+
+	sdcard: sdmmc@6E500000 {
+		status = "disabled";
+		compatible = "edgeq,raptor2-sdhci";
+		reg = <0x0 0x6E500000 0x0 0x1000>;
+		interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
+		clocks = <&sdmmcclk_core>;
+		clock-names = "core";
+		bus-width = <4>;
+		reg-shift = <2>;
+		non-removable;
+		sd-card;
+		no-sdio;
+		wp-inverted;
+		sd-uhs-sdr50;
+		mmc_coherent;
+		mmc_noncoherent;
+		raptor2_b0;
+	};
+
+	stmr: stmr@800F70000 {
+		status = "disabled";
+		compatible = "edgeq,raptor2-stmr";
+		reg = <0x0 0x690806E0 0x0 0x8>,	/* SIF reg event 69 */
+		      <0x0 0x3CB20020 0x0 0x4>,	/* IOSS mux 0 addr */
+		      <0x8 0x00F70000 0x0 0x00010000>;	/* stmr shm addr */
+		interrupt-parent = <&gic>;
+		interrupts = <GIC_SPI 69 IRQ_TYPE_EDGE_RISING>;
+	};
+
+	gpio_syscon: gpio@6E440000 {
+		compatible = "eq,raptor2-gpio-syscon", "syscon";
+		reg = <0x0 0x6E440000 0x0 0x98>;
+	};
+
+	heartbeat: heartbeat@800F10000 {
+		status = "disabled";
+		compatible = "edgeq,raptor2-heartbeat";
+	};
+
+	reset: reset@800F10000 {
+		status = "disabled";
+		compatible = "edgeq,raptor2-reboot";
+	};
+
+	bsscmdq: bsscmdq@800E00000 {
+		status = "disabled";
+		compatible = "edgeq,raptor2-bsscmdq";
+		#address-cells = <0x2>;
+		#size-cells = <0x2>;
+		reg =	<0x8 0x00E00000 0x0 0x00100000>,	/* shm base load img */
+			<0x8 0x00F00000 0x0 0x00010000>,	/* channel base */
+			<0x8 0x00F10000 0x0 0x00010000>,	/* efuse/reset */
+			<0x8 0x00F20000 0x0 0x00010000>,	/* Unused */
+			<0x8 0x00F30000 0x0 0x00020000>,	/* Image Auth */
+			<0x8 0x00F50000 0x0 0x00010000>,	/* SU Infra */
+			<0x8 0x00F60000 0x0 0x00010000>;	/* Unused */
+	};
+
+	socgpio: socgpio@6E440000 {
+		 status = "disabled";
+		 compatible = "raptor2-b0-socgpio";
+		 reg = <0x0 0x6E440000 0x0 0xA0>;
+		 #gpio-cells = <2>;
+		 gpio-controller;
+		 ngpios = <64>;
+		 gpio-line-names = "GPIO_PIN_0",	/* RG_GPIO PIN 0*/
+			 "GPIO_PIN_1",                  /* RG_GPIO PIN 1*/
+			 "GPIO_PIN_2",                  /* RG_GPIO PIN 2*/
+			 "GPIO_PIN_3",                  /* RG_GPIO PIN 3*/
+			 "GPIO_PIN_4",                  /* RG_GPIO PIN 4*/
+			 "GPIO_PIN_5",                  /* RG_GPIO PIN 5*/
+			 "GPIO_PIN_6",                  /* RG_GPIO PIN 6*/
+			 "GPIO_PIN_7",                  /* RG_GPIO PIN 7*/
+			 "GPIO_PIN_8",                  /* RG_GPIO PIN 8*/
+			 "GPIO_PIN_9",			/* RG_GPIO PIN 9*/
+			 "GPIO_PIN_10",		/* RG_GPIO PIN 10*/
+			 "GPIO_PIN_11",		/* RG_GPIO PIN 11*/
+			 "GPIO_PIN_12",		/* RG_GPIO PIN 12*/
+			 "GPIO_PIN_13",		/* RG_GPIO PIN 13*/
+			 "GPIO_PIN_14",		/* RG_GPIO PIN 14*/
+			 "GPIO_PIN_15",                 /* RG_GPIO PIN 15*/
+			 "GPIO_PIN_16",		/* RG_GPIO PIN 16*/
+			 "GPIO_PIN_17",                 /* RG_GPIO PIN 17*/
+			 "GPIO_PIN_18",                 /* RG_GPIO PIN 18*/
+			 "GPIO_PIN_19",                 /* RG_GPIO PIN 19*/
+			 "GPIO_PIN_20",		/* RG_GPIO PIN 20*/
+			 "GPIO_PIN_21",		/* RG_GPIO PIN 21*/
+			 "GPIO_PIN_22",		/* RG_GPIO PIN 22*/
+			 "GPIO_PIN_23",		/* RG_GPIO PIN 23*/
+			 "GPIO_PIN_24",		/* RG_GPIO PIN 24*/
+			 "GPIO_PIN_25",		/* RG_GPIO PIN 25*/
+			 "GPIO_PIN_26",		/* RG_GPIO PIN 26*/
+			 "GPIO_PIN_27",		/* RG_GPIO PIN 27*/
+			 "GPIO_PIN_28",		/* RG_GPIO PIN 28*/
+			 "GPIO_PIN_29",		/* RG_GPIO PIN 29*/
+			 "GPIO_PIN_30",		/* RG_GPIO PIN 30*/
+			 "GPIO_PIN_31",		/* RG_GPIO PIN 31*/
+			 "GPIO_PIN_32",                 /* RG_GPIO PIN 32*/
+			 "GPIO_PIN_33",		/* RG_GPIO PIN 33*/
+			 "GPIO_PIN_34",		/* RG_GPIO PIN 34*/
+			 "GPIO_PIN_35",                 /* RG_GPIO PIN 35*/
+			 "GPIO_PIN_36",                 /* RG_GPIO PIN 36*/
+			 "GPIO_PIN_37",		/* RG_GPIO PIN 37*/
+			 "GPIO_PIN_38",		/* RG_GPIO PIN 38*/
+			 "GPIO_PIN_39",		/* RG_GPIO PIN 39*/
+			 "GPIO_PIN_40",		/* RG_GPIO PIN 40*/
+			 "GPIO_PIN_41",		/* RG_GPIO PIN 41*/
+			 "GPIO_PIN_42",		/* RG_GPIO PIN 42*/
+			 "GPIO_PIN_43",		/* RG_GPIO PIN 43*/
+			 "GPIO_PIN_44",		/* RG_GPIO PIN 44*/
+			 "GPIO_PIN_45",                 /* RG_GPIO PIN 45*/
+			 "GPIO_PIN_46",		/* RG_GPIO PIN 46*/
+			 "GPIO_PIN_47",		/* RG_GPIO PIN 47*/
+			 "GPIO_PIN_48",		/* RG_GPIO PIN 48*/
+			 "GPIO_PIN_49",                 /* RG_GPIO PIN 49*/
+			 "GPIO_PIN_50",		/* RG_GPIO PIN 50*/
+			 "GPIO_PIN_51",		/* RG_GPIO PIN 51*/
+			 "GPIO_PIN_52",                 /* RG_GPIO PIN 52*/
+			 "GPIO_PIN_53",                 /* RG_GPIO PIN 53*/
+			 "GPIO_PIN_54",		/* RG_GPIO PIN 54*/
+			 "GPIO_PIN_55",		/* RG_GPIO PIN 55*/
+			 "GPIO_PIN_56",		/* RG_GPIO PIN 56*/
+			 "GPIO_PIN_57",		/* RG_GPIO PIN 57*/
+			 "GPIO_PIN_58",		/* RG_GPIO PIN 58*/
+			 "GPIO_PIN_59",		/* RG_GPIO PIN 59*/
+			 "GPIO_PIN_60",		/* RG_GPIO PIN 60*/
+			 "GPIO_PIN_61",		/* RG_GPIO PIN 61*/
+			 "GPIO_PIN_62",		/* RG_GPIO PIN 62*/
+			 "GPIO_PIN_63";		/* RG_GPIO PIN 63*/
+	 };
+
+	socgpio_pinctrl: socgpio_pinctrl@6E440000 {
+		 status = "disabled";
+		 compatible = "r2-socgpio-pinctrl";
+		 reg = <0x0 0x6E440000 0x0 0xA0>;
+		 #gpio-cells = <2>;
+		 interrupt-names = "gpio21";
+		 interrupts = <GIC_SPI 211 IRQ_TYPE_EDGE_RISING>;
+		 #interrupt-cells = <2>;
+		 gpio-controller;
+
+		 state_spim1: pinmux1 {
+			spim1 {	/*gpio 46-48-49 as spi pins */
+				edgeq,groups = "spim_1_clk_miso_mosi";
+				edgeq,function = "spi";
+				edgeq,pulldown = <0>;
+				edgeq,ie = <0>;
+			};
+		 };
+
+		state_gpio_line: pinmux2 {
+			gpio47_gpio {
+				edgeq,pulldown = <0>;
+				edgeq,groups = "gpio47";
+				edgeq,function = "gpio";
+				edgeq,oe = <1>;
+			};
+		 };
+
+		 state_spi_line: pinmux3 {
+			gpio47_spi {
+				edgeq,groups = "bss_spim_1_cs_n";
+				edgeq,function = "spi";
+				edgeq,output = <1>;
+			};
+		 };
+
+		state_vbus_40: pinmux4 {
+			/* pin configuration node: to set config of a gpio */
+			vbus_40 {
+				edgeq,groups = "gpio40";
+				edgeq,function = "gpio";
+				edgeq,drive-strength = <0xF>;
+				edgeq,pulldown = <0>;
+			};
+		};
+
+		state_vbus_41: pinmux5 {
+			vbus_41 {
+				edgeq,groups = "gpio41";
+				edgeq,function = "gpio";
+				edgeq,drive-strength = <0xF>;
+				edgeq,pulldown = <0>;
+			};
+		 };
+
+		state_sif_in: pinmux6 {
+			SIF_IN { /* gpio 21 */
+				edgeq,groups = "sif_in";
+				edgeq,function = "sif_input";
+				       edgeq,pulldown = <0>;
+				edgeq,ie = <0>;
+		       };
+		};
+
+	};
+
+	eeprom: eeprom {
+		status = "disabled";
+		compatible = "edgeq,raptor2-eeprom";
+	};
+
+	rng: rng@70300000 {
+		status = "disabled";
+		compatible = "edgeq,raptor2-rng";
+		reg = <0x0 0x70300000 0x0 0x1000>;
+	};
+
+};

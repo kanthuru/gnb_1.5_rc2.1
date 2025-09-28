@@ -1,0 +1,20 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * EdgeQ Inc.
+ *
+ * EdgeQ Raptor2 DTSI for Exception Manager/Handler Device
+ */
+
+/ {
+	EXMGR: r2devexmgr@00000000 {
+		compatible = "arm,edgeq-raptor2,exmgr";
+		reg =	<0x0 0x00000000 0x0 0x00000000>;
+		interrupt-parent = <&gic>;
+		#interrupt-cells = <3>;
+		interrupts = <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
+			     <GIC_SPI 242 IRQ_TYPE_LEVEL_HIGH>;
+		interrupt-names = "su_rx_int", "rtos_rx_int";
+		label = "exmgr";
+		status = "ok";
+	};
+};

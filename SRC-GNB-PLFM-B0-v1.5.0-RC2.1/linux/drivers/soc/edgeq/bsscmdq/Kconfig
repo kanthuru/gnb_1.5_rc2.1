@@ -1,0 +1,10 @@
+# Raptor-2
+config EDGEQ_RAPTOR2_BSS_CMDQ
+		bool "Kernel Driver for BSS RT Command Queue"
+		default y
+		depends on ARCH_EDGEQ
+		help
+		Kernel Driver for BSS RT Command Queue.
+		Communicate with BSS RT for SU infra, reset,
+		Load SU firmware, License suthentication,
+		EFUSE operations etc.

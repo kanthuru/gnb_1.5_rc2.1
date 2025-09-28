@@ -1,0 +1,628 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * EdgeQ Inc.
+ *
+ *
+ * Raptor2 Platform
+ */
+
+/dts-v1/;
+#define DDR_BASE_ADDR		0x800000000
+#define DDR_BASE_ADDR_MSB	(DDR_BASE_ADDR >> 32)
+#define DDR_GNB_BASE_ADDR_MSB	(DDR_BASE_ADDR_MSB + 1)
+
+/* UIO Reservations*/
+#define KB(x)	((x) * 1024)
+#define MB(x)	(KB (KB (x)))
+#define GB(x)	(MB (KB (x)))
+
+#define XGMAC_OTHERS_RESERVED_SIZE	0x100000
+#define BSS_RESERVED_SIZE		0xE70000
+#define L1_RESERVED_OFF			MB(16)
+#define L1_LOGBUFSU_OFF			(L1_RESERVED_OFF)
+#define L1_LOGBUFSU_SIZE		(0x05641000)
+#define L1_DDRAPP_MEM_OFF		(L1_LOGBUFSU_OFF + L1_LOGBUFSU_SIZE)
+#define L1_DDRAPP_MEM_SIZE		(0x019BF000)
+#define L1_DDRL1UIO_OFF			(L1_DDRAPP_MEM_OFF + L1_DDRAPP_MEM_SIZE)
+#define L1_DDRL1UIO_SIZE		(MB(128))
+#define L1_RESERVED_SIZE		(L1_LOGBUFSU_SIZE + L1_DDRAPP_MEM_SIZE + L1_DDRL1UIO_SIZE)
+
+#include "raptor2-b0-cpuss.dtsi"
+#include "raptor2-b0-ioss.dtsi"
+#include "raptor2-b0-su-engines.dtsi"
+#include "raptor2-b0-bss.dtsi"
+#include "raptor2-b0-mtd.dtsi"
+
+/ {
+	compatible = "edgeq,b0-titan";
+	chosen {
+		bootargs = "root=/dev/ram0 rw earlycon=edgeq8250,mmio32,0x6E450040
+			    console=ttyS0,115200 maxcpus=18 \
+			    uio_pdrv_genirq.of_id=generic-uio";
+		stdout-path = "serial0:115200n8";
+	};
+
+	aliases {
+		serial0 = &bss_serial0;
+		pci-dmall0 = &PCIE_DMA_LL;
+		pci-glb0 = &GLOB_MEM;
+	};
+
+	memory {
+		device_type = "memory";
+		reg = <DDR_BASE_ADDR_MSB 0x00000000 0x2 0x00000000>; /*To be filled by bootloader*/
+		numa-node-id = <0>;
+	};
+
+/*
+ * First 16MB reserved for services as below
+ * 1MB: XGMAC virt mem 96K, rest unassigned
+ * 14784K: BSS RT SHM
+ * 64K for STMR Memory
+ * 256K PCI-E EP Glob Memory
+ * 128K for EEPROM Memory
+ * 64K for eMMC Memory
+ */
+
+	reserved-memory {
+		#address-cells = <2>;
+		#size-cells = <2>;
+		ranges;
+
+		XGMAC_OTHERS: xgmac_others-mem-off@00000000 {
+			reg = <DDR_BASE_ADDR_MSB 0x00000000 0x0 XGMAC_OTHERS_RESERVED_SIZE>;
+			no-map;
+		};
+
+		BSS_SHM: bss_shm-mem-off@00100000 {
+			reg = <DDR_BASE_ADDR_MSB 0x00100000 0x0 BSS_RESERVED_SIZE>;
+			no-map;
+		};
+
+		STMR: stmr-mem-off@00f70000 {
+			reg = <DDR_BASE_ADDR_MSB 0x00F70000 0x0 0x10000>;
+			no-map;
+		};
+
+		PCI_GLOB: pci_glob-mem-off@00f80000 {
+			reg = <DDR_BASE_ADDR_MSB 0x00F80000 0x0 0x40000>;
+			no-map;
+		};
+
+		EEPROM: eeprom-mem-off@00fd0000 {
+			reg = <DDR_BASE_ADDR_MSB 0x00FD0000 0x0 0x20000>;
+			no-map;
+		};
+
+		EMMC: emmc-mem-off@00ff0000 {
+			reg = <DDR_BASE_ADDR_MSB 0x00FF0000 0x0 0x10000>;
+			no-map;
+		};
+
+		L1RESERVED: l1reserved-mem-off@10000000 {
+			reg = <DDR_BASE_ADDR_MSB L1_RESERVED_OFF 0x0 L1_RESERVED_SIZE>;
+			no-map;
+		};
+
+		PCIE_DMA_LL: dma_ll-mem-off@40000000 { /* 128MB for B0 HDMA LL region */
+			reg = <DDR_BASE_ADDR_MSB 0x40000000 0x0 0x8000000>;
+		};
+
+		DDRBEAM: ddrbeamform-mem-off@80000000 {
+			reg = <DDR_BASE_ADDR_MSB 0x80000000 0x0 0x8000000>;
+			no-map;
+		};
+
+		DDRULHARQ: ddrulharq-mem-off@88000000 {
+			reg = <DDR_BASE_ADDR_MSB 0x88000000 0x0 0x18000000>;
+			no-map;
+		};
+
+		DDRULDATA: ddruldata-mem-off@C8000000 {
+			reg = <DDR_BASE_ADDR_MSB 0xc8000000 0x0 0x6400000>;
+			no-map;
+		};
+
+		DDRDLDATA: ddrdldata-mem-off@CE400000 {
+			reg = <DDR_BASE_ADDR_MSB 0xCE400000 0x0 0xC800000>;
+			no-map;
+		};
+
+		DDRMXLMEM: ddrmxl-mem-off@DAC00000 {
+			reg = <DDR_BASE_ADDR_MSB 0xDAC00000 0x0 0x500000>;
+			no-map;
+		};
+
+		DDRCRSSQ: ddrcrssq-mem-off@DB100000 {
+			reg = <DDR_BASE_ADDR_MSB 0xDB100000 0x0 0x100000>;
+			no-map;
+		};
+
+		L1COREDUMP: l1coredump-mem-off@DB200000 {
+			reg = <DDR_BASE_ADDR_MSB 0xDB200000 0x0 0x2000000>;
+			no-map;
+		};
+
+		DDRGNBNGPCU: ddrgnbngp-mem-gnbcu-off@00000000 {
+			reg = <DDR_GNB_BASE_ADDR_MSB 0x00000000 0x0 0x40000000>;
+			no-map;
+		};
+
+		DDRGNBNGPDU: ddrgnbngp-mem-gnbdu-off@40000000 {
+			reg = <DDR_GNB_BASE_ADDR_MSB 0x40000000 0x0 0x48000000>;
+			no-map;
+		};
+
+		DDRNGPSHARED: ddrgnbngp-mem-gnbsh-off@88000000 {
+			reg = <DDR_GNB_BASE_ADDR_MSB 0x88000000 0x0 0x19000000>;
+			no-map;
+		};
+
+		LOGBUFFCU: LOGBUFFCU-off@A1000000 {
+			reg = <DDR_GNB_BASE_ADDR_MSB 0xA1000000 0x0 0x800000>;
+			no-map;
+		};
+
+		LOGBUFFDU: LOGBUFFDU-off@A1800000 {
+			reg = <DDR_GNB_BASE_ADDR_MSB 0xA1800000 0x0 0x800000>;
+			no-map;
+		};
+
+	};
+
+	/*XGMAC_VIRT0/1/2_MEM REG description*/
+	/*16KB Register Space in DDR */
+	/*8KB RX queue location*/
+	/*8KB TX queue location*/
+	XGMAC_VIRT_MEM: xgmacvirt0mem@80001000 {
+			reg = <DDR_BASE_ADDR_MSB 0x00001000 0x0 0x0018000>,
+				<DDR_BASE_ADDR_MSB 0x00019000 0x0 0x0000C000>,
+				<DDR_BASE_ADDR_MSB 0x00025000 0x0 0x0000C000>;
+			no-map;
+			};
+
+	/* 128KB before emmc_memory reserved for EEPROM data*/
+	eeprom_memory: buffer-ddr-off@FD0000 {
+			reg = <DDR_BASE_ADDR_MSB 0x00FD0000 0x0 0x00020000>;
+			no-map;
+			};
+
+	/* 64KB before 16MB offset reserved for dma */
+	emmc_memory: buffer-ddr-off@FF0000 {
+			reg = <DDR_BASE_ADDR_MSB 0x00FF0000 0x0 0x00010000>;
+			no-map;
+		     };
+
+	LOGBUFSU: logbufsu-mem-off@0 {
+		reg = <DDR_BASE_ADDR_MSB L1_LOGBUFSU_OFF 0x0 L1_LOGBUFSU_SIZE>;
+		no-map;
+	};
+
+	DDRAPP_MEM: ddrappmem-off@0 {
+		reg = <DDR_BASE_ADDR_MSB L1_DDRAPP_MEM_OFF 0x0 L1_DDRAPP_MEM_SIZE>;
+		no-map;
+	};
+
+	DDRL1UIO: ddrl1uio-mem-off@0 {
+		reg = <DDR_BASE_ADDR_MSB L1_DDRL1UIO_OFF 0x0 L1_DDRL1UIO_SIZE>;
+		no-map;
+	};
+
+	/* From 15.5MB to +256KB for EP GLOB region */
+	GLOB_MEM: glob-mem-off@F80000 {
+			reg = <DDR_BASE_ADDR_MSB 0x00F80000 0x0 0x00040000>;
+			no-map;
+			};
+
+	ADMAREG_MEM: admaregmem@60500000 {
+			reg = <0x0 0x60500000 0x0 0x00004000>;
+			no-map;
+		     };
+
+	OCM_MEM: ocmmem@180000000 {
+			reg = <0x1 0x80000000 0x0 0x00030000>;
+			no-map;
+		     };
+
+	OLMEM_MEM: olmem@14400000 {
+			reg = <0x0 0x14400000 0x0 0x000C0000>;
+			no-map;
+		     };
+
+	PLMEM_MEM: plmem@1c800000 {
+			reg = <0x0 0x1c800000 0x0 0x00080000>;
+			no-map;
+		    };
+
+	MXL1REG_MEM: mxl1reg@62400000 {
+			reg = <0x0 0x62400000 0x0 0x00A00000>;
+			no-map;
+		    };
+
+	MXL2REG_MEM: mxl2reg@63400000 {
+			reg = <0x0 0x63400000 0x0 0x00A00000>;
+			no-map;
+		};
+
+	CRSSREG_MEM: crssreg_mem@64400000 {
+			reg = <0x0 0x64400000 0x0 0x00400000>;
+			no-map;
+		};
+
+	CRSSREG0_MEM: crssreg0_mem@64400000 {
+			reg = <0x0 0x64400000 0x0 0x00400000>;
+			no-map;
+		};
+	CRSSREG1_MEM: crssreg1_mem@65400000 {
+			reg = <0x0 0x65400000 0x0 0x00400000>;
+			no-map;
+		    };
+	CRSSREG2_MEM: crssreg2_mem@66400000 {
+			reg = <0x0 0x66400000 0x0 0x00400000>;
+			no-map;
+		    };
+	CRSSREG3_MEM: crssreg3_mem@67400000 {
+			reg = <0x0 0x67400000 0x0 0x00400000>;
+			no-map;
+		    };
+
+	CRSSMEMSS_MEM: crssmemss@1c880000 {
+			reg = <0x0 0x1c880000 0x0 0x00080000>;
+			no-map;
+		    };
+
+	SPUDLM_MEM: spudlm@68080000 {
+			reg = <0x0 0x68080000 0x0 0x00008000>;
+			no-map;
+		    };
+
+	LMEM_RANGE: lmem@18000000 {
+			reg = <0x0 0x18000000 0x0 0x17FFFFFF>;
+			no-map;
+		    };
+
+	TXU15_LMEM_RANGE: txu15_lmem@18000000 {
+			reg = <0x0 0x1BC00000 0x0 0x00100000>;
+			no-map;
+		};
+
+	TXU_LMEM_0_3_RANGE: txu0-3-lmem@18000000 {
+			reg = <0x0 0x18000000 0x0 0x00100000>,
+				<0x0 0x19000000 0x0 0x00100000>,
+				<0x0 0x1a000000 0x0 0x00100000>,
+				<0x0 0x1b000000 0x0 0x00100000>;
+			no-map;
+		};
+
+	TXU_LMEM_9_12_RANGE: txu9-12-lmem@1a000000 {
+			reg = <0x0 0x1a000000 0x0 0x00100000>,
+				<0x0 0x1a400000 0x0 0x00100000>,
+				<0x0 0x1a800000 0x0 0x00100000>,
+				<0x0 0x1ac00000 0x0 0x00100000>;
+			no-map;
+		};
+
+	JESD_CONTROLLER: jesd-controller@3cb00000 {
+			reg = <0x0 0x3cb00000 0x0 0x100000>;
+			no-map;
+		};
+
+	JESD_SERDES: jesd-serdes@3c400000{
+			reg = <0x0 0x3c400000 0x0 0x100000>;
+			no-map;
+		};
+
+	JESD_SERDES_LINK4: jesd-serdes-link4@3c520000 {
+			reg = <0x0 0x3c520000 0x0 0x20000>;
+			no-map;
+		};
+
+	edgeq_uio0: edgeq_uio {
+			compatible = "edgeq,raptor2-uio-all";
+			memory-region = <&ADMAREG_MEM 0x02 0>,
+				<&OCM_MEM 0x01 0>,
+				<&OLMEM_MEM 0x02 0>,
+				<&PLMEM_MEM 0x02 0>,
+				<&MXL1REG_MEM 0x02 0>,
+				<&MXL2REG_MEM 0x02 0>,
+				<&CRSSREG_MEM 0x02 0>,
+				<&CRSSMEMSS_MEM 0x02 0>,
+				<&SPUDLM_MEM 0x02 0>,
+				<&DDRAPP_MEM 0x03 0>,
+				<&DDRBEAM 0x03 0>,
+				<&DDRULHARQ 0x03 0>,
+				<&DDRULDATA 0x01 0>,
+				<&DDRDLDATA 0x01 0>,
+				<&DDRMXLMEM 0x01 0>,
+				<&DDRCRSSQ 0x01 0>,
+				<&L1COREDUMP 0x01 0>,
+				<&DDRGNBNGPCU 0x01 0>,
+				<&DDRGNBNGPDU 0x01 0>,
+				<&DDRNGPSHARED 0x01 1>,
+				<&LOGBUFFCU 0x01 0>,
+				<&LOGBUFFDU 0x01 0>,
+				<&LOGBUFSU 0x01 0>,
+				<&LMEM_RANGE 0X02 0>,
+				<&TXU15_LMEM_RANGE 0X02 0>,
+				<&eeprom_memory 0x03 0>,
+				<&TXU_LMEM_9_12_RANGE 0x02 0>,
+				<&JESD_CONTROLLER 0x02 0>,
+				<&TXU_LMEM_0_3_RANGE 0x02 0>,
+				<&DDRL1UIO 0x03 0>,
+				<&JESD_SERDES 0x02 0>,
+				<&JESD_SERDES_LINK4 0x02 0>,
+				<&CRSSREG0_MEM 0x02 0>,
+				<&CRSSREG1_MEM 0x02 0>,
+				<&CRSSREG2_MEM 0x02 0>,
+				<&CRSSREG3_MEM 0x02 0>;
+			mem-region-name = "ADMAREG", "OCM", "OLMEM", "PLMEM", "MXL1REG",
+				"MXL2REG","CRSSREG", "CRSSMEMSS", "SPUDLM", "DDRAPPMEM",
+				"DDRBEAMFORM", "DDRULHARQ", "DDRULDATA", "DDRDLDATA", "DDRMXLMEM",
+				"DDRCRSSQ", "L1COREDUMP", "DDRGNBNGPCU", "DDRGNBNGPDU",
+				"DDRNGPSHARED", "LOGBUFFCU", "LOGBUFFDU", "LOGBUFSU", "LMEM_RANGE",
+				"TXU15_LMEM_RANGE", "EEPROM_MEMORY_BUFFER", "TXU-9-12_LMEM",
+				"JESD_CONTROLLER", "TXU-0-3_LMEM", "DDRL1UIO","JESD_SERDES",
+				"JESD_SERDES_LINK4", "CRSSREG0", "CRSSREG1", "CRSSREG2", "CRSSREG3";
+			interrupts = <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>;
+			status = "ok";
+	};
+
+	edgeq_virt: edgeq_virt_uio@0x3C980000 {
+		compatible = "edgeq,virt";
+		reg = <0x0 0x3C980000 0x0 0x80000>;
+		reg-names = "pcie_dma";
+
+		memory-region = < &PCIE_DMA_LL >,
+				< &XGMAC_VIRT_MEM >;
+
+		mem-region-name = "PCIE_DMA_WA", "XGMAC_VIRT";
+
+		virt_reg_size = < 0x4000 >;
+		virt_rx_size = < 0x2000 >;
+		virt_tx_size = < 0x2000 >;
+		vdevs = < 6 >;
+		dma-channels = < 16 >;
+		use_netlink;
+		status = "ok";
+	};
+
+	eq_syscon0: eq_syscon {
+		compatible = "edgeq,syscon";
+		eq_sif_syscon = <&sif_syscon>;
+		eq_gpio_syscon = <&gpio_syscon>;
+		sif_conf = <0x3EC 0x00005A5A>,	/* XGMAC 1PPS -> GPIO39 */
+						/* GPS reset -> GPIO38 */
+			   <0x2F0 0x00003000>;	/* same as above, set GPIO39/38's msb */
+		gpio_conf = <0x6C 0x1E0C1E50>;	/* GPIO 39 and 38 as output mode */
+	};
+};
+
+&armv8_arch_timer {
+	clock-frequency = <61440000>;
+};
+
+&dsu_c0 {
+	status = "ok";
+
+	cpus =  <&E1_C0_0>, <&E1_C0_1>, <&E1_C1_0>, <&E1_C1_1>, <&E1_C2_0>,
+		<&E1_C2_1>, <&E1_C3_0>, <&E1_C3_1>, <&E1_C4_0>, <&E1_C4_1>;
+
+};
+
+&dsu_p0 {
+	status = "ok";
+	cpus =  <&E1_P0_0>, <&E1_P0_1>, <&E1_P1_0>, <&E1_P1_1>,
+		<&E1_P2_0>, <&E1_P2_1>, <&E1_P3_0>, <&E1_P3_1>;
+};
+
+&cmn_pmu {
+	status = "ok";
+};
+
+&armv8_pmuv3{
+	status = "ok";
+};
+
+&bss_serial0 {
+	status = "ok";
+	clock-frequency = <750000000>;
+};
+
+&bss_serial1 {
+	status = "ok";
+	clock-frequency = <750000000>;
+	gnss {
+		status = "okay";
+		current-speed = <38400>;
+	};
+};
+
+&spi0 {
+	spi-max-frequency = <80000000>;
+	status = "ok";
+
+	flash@0 {
+		compatible = "jedec,spi-nor";
+		reg = <0>;
+
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		mbr@0 {
+			reg = <0x0 0x00080000>; /* 512KB charley comment: for MBR location */
+		};
+
+		firmware_fs@80000 {
+			reg = <0x00080000 0x00400000>; /* 4MB for firmware failedsafe */
+		};
+
+		uRamdisk@480000 {
+			reg = <0x00480000 0x00580000>; /* 5.5M for uRamDisk */
+		};
+
+		linux@A00000 {
+			reg = <0x00A00000 0x004C0000>; /* 4.75MB for linux kernel */
+		};
+
+		dts@EC0000 {
+			reg = <0x00EC0000 0x00040000>; /* 0.25M for DTS */
+		};
+
+		resvd_fs@F00000 {
+			reg = <0x00F00000 0x00100000>; /* 1 MB reserved for failedsafe */
+		};
+
+		firmware_a@1000000 {
+			reg = <0x01000000 0x00400000>; /* 4MB for firmware A */
+		};
+
+		resved_a@1400000 {
+			reg = <0x01400000 0x00400000>; /* 4MB for reserved A */
+		};
+
+		firmware_b@1800000 {
+			reg = <0x01800000 0x00400000>; /* 4MB for firmware B */
+		};
+
+		resved_b@1C00000 {
+			reg = <0x01C00000 0x00400000>; /* 4MB for reserved B */
+		};
+
+	};
+};
+
+&spi1 {
+	status = "ok";
+};
+
+&spi2 {
+	status = "ok";
+};
+
+&spi3 {
+	/delete-property/ spi-cpol;
+	/delete-property/ spi-cpha;
+	/delete-property/ read_cs_toggle_quirk;
+	status = "ok";
+};
+
+&spi4 {
+	/delete-property/ spi-cpol;
+	/delete-property/ spi-cpha;
+	/delete-property/ read_cs_toggle_quirk;
+	status = "ok";
+};
+
+&emmc {
+	status = "ok";
+	/delete-property/ mmc_coherent;
+	memory-region = <&emmc_memory>;
+};
+
+&i2c0 {
+	status = "ok";
+};
+
+&i2c1 {
+	status = "ok";
+};
+
+&i2c2 {
+	status = "ok";
+};
+
+&ether0 {
+	edgeq,pmd-num-chans = <3>;
+	edgeq,pmd-start-chan = <0>;
+	edgeq,virt-chan-uio-id = <1>;
+	status = "ok";
+};
+
+&ether1 {
+	edgeq,pmd-num-chans = <3>;
+	edgeq,pmd-start-chan = <0>;
+	edgeq,virt-chan-uio-id = <2>;
+	status = "ok";
+};
+
+&ether2 {
+	edgeq,pmd-num-chans = <3>;
+	edgeq,pmd-start-chan = <0>;
+	edgeq,virt-chan-uio-id = <3>;
+	status = "ok";
+};
+
+&ether3 {
+	edgeq,pmd-num-chans = <3>;
+	edgeq,pmd-start-chan = <0>;
+	edgeq,virt-chan-uio-id = <4>;
+	status = "ok";
+};
+
+&ether4 {
+	edgeq,pmd-num-chans = <3>;
+	edgeq,pmd-start-chan = <0>;
+	edgeq,virt-chan-uio-id = <5>;
+	status = "ok";
+};
+
+&crss {
+	status = "ok";
+};
+
+&stmr {
+	status = "ok";
+};
+
+&bsscmdq {
+	status = "ok";
+};
+
+&heartbeat {
+	status = "ok";
+};
+
+&reset {
+	status = "ok";
+};
+
+&edacmc {
+	status = "ok";
+};
+
+&rfgpio {
+	status = "ok";
+};
+
+/*
+ *      uart = 0,1,7,8
+ *      pcie_perst = 50
+ *      i2c2 = 42,43
+ *      i2c3 = 44,45
+ *      MV PHY reset = 2
+ */
+&socgpio {
+	status = "disabled";
+	gpio-reserved-ranges = <0 3>, <7 2>, <42 4>, <50 1>;
+};
+
+&socgpio_pinctrl {
+	status = "ok";
+	gpio-reserved-ranges = <0 3>, <7 2>, <42 4>, <50 1>;
+};
+
+&eeprom {
+	status = "ok";
+	memory-region = <&eeprom_memory>;
+};
+
+&usb1 {
+	status = "ok";
+	pinctrl-names = "vbus";
+	pinctrl-0 = <&state_vbus_41>;
+	vbus-gpios = <&socgpio_pinctrl 41 GPIO_ACTIVE_HIGH>;
+};
+
+&rng {
+	status = "ok";
+};

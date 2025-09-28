@@ -1,0 +1,5 @@
+# Raptor-2
+config EDGEQ_RAPTOR2_WLAN_SHM
+	bool "Support for EdgeQ Raptor2 WLAN SHM"
+	default n
+	#default y if ARCH_EDGEQ

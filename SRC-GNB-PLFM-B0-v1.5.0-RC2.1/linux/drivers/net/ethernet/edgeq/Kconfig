@@ -1,0 +1,23 @@
+# SPDX-License-Identifier: GPL-2.0-only
+#
+# EdgeQ network device configuration
+#
+
+config NET_VENDOR_EDGEQ
+	bool "EdgeQ devices"
+	default y
+	depends on ARM64 && HAS_IOMEM
+	help
+	  If you have a network (Ethernet) based on EdgeQ SoC (which uses
+	  Synopsys Ethernet IP Cores), say Y.
+
+	  Note that the answer to this question doesn't directly affect the
+	  kernel: saying N will just cause the configurator to skip all
+	  the questions about EdgeQ chipset. If you say Y, you will
+	  be asked for your specific chipset in the following questions.
+
+if NET_VENDOR_EDGEQ
+
+source "drivers/net/ethernet/edgeq/xgbe/Kconfig"
+
+endif # NET_VENDOR_EDGEQ

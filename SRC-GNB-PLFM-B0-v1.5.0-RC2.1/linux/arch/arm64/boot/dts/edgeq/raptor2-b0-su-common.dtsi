@@ -1,0 +1,91 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * EdgeQ Inc.
+ *
+ * EdgeQ Raptor2 SU-COMMON DTSI
+ */
+
+
+/ {
+	SUDEV: su_device {
+		compatible = "risc-v,edgeq-raptor2";
+		#address-cells = <2>;
+		#size-cells = <2>;
+
+		ilm@0 {
+			device_type = "ilm";
+			reg = <0x0 0x00000000 0x0 0x00008000>;
+		};
+
+		dlm@80000 {
+			device_type = "dlm";
+			reg = <0x0 0x00080000 0x0 0x00004000>;
+		};
+
+		cmu@110000 {
+			device_type = "cmu";
+			reg = <0x0 0x00110000 0x0 0x00010000>;
+		};
+
+		stmr@120000 {
+			device_type = "stmr";
+			reg = <0x0 0x00120000 0x0 0x00010000>;
+		};
+
+		dbg@200000 {
+			device_type = "dbg";
+			reg = <0x0 0x00200000 0x0 0x00100000>;
+		};
+
+		tmr@300000 {
+			device_type = "tmr";
+			reg = <0x0 0x00300000 0x0 0x01000000>;
+		};
+
+		peripherals@400000 {
+			device_type = "peripherals";
+			reg = <0x0 0x00400000 0x0 0x00400000>;
+		};
+
+		eplic@800000 {
+			device_type = "eplic";
+			reg = <0x0 0x00800000 0x0 0x00400000>;
+		};
+
+		splic@c00000 {
+			device_type = "splic";
+			reg = <0x0 0x00c00000 0x0 0x00400000>;
+		};
+	};
+
+	SUMEM: su_memory {
+		compatible = "risc-v,edgeq-raptor2";
+		#address-cells = <2>;
+		#size-cells = <2>;
+
+		loc_lmem_wb@4000000 {
+			device_type = "loc_lmem_wb";
+			reg = <0x0 0x04000000 0x0 0x00800000>;
+		};
+
+		loc_lmem_wt@4800000 {
+			device_type = "loc_lmem_wt";
+			reg = <0x0 0x04800000 0x0 0x00800000>;
+		};
+
+		loc_lmem_u@5000000 {
+			device_type = "loc_lmem_u";
+			reg = <0x0 0x05000000 0x0 0x00800000>;
+		};
+
+		lmem@10000000 {
+			device_type = "lmem";
+			reg = <0x0 0x10000000 0x0 0x30000000>;
+		};
+
+		edev@40000000 {
+			device_type = "edev";
+			reg = <0x0 0x40000000 0x0 0x30000000>;
+		};
+	};
+};

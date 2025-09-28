@@ -1,0 +1,28 @@
+From 02253d2dc19b0861daeeaf388bff3eb3a152bbb6 Mon Sep 17 00:00:00 2001
+From: Onkar Kadam <onkar.kadam@edgeq.io>
+Date: Tue, 2 Jul 2024 12:39:49 +0530
+Subject: [PATCH] Disable the docker service from starting at system bootup by
+ default.
+
+This change resolves the issue with the sctp connection getting ABORTED within a few seconds using test program
+
+Signed-off-by: Onkar Kadam <onkar.kadam@edgeq.io>
+---
+ contrib/init/systemd/docker.service | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/contrib/init/systemd/docker.service b/contrib/init/systemd/docker.service
+index 517463172b..fc4b49aecd 100644
+--- a/contrib/init/systemd/docker.service
++++ b/contrib/init/systemd/docker.service
+@@ -30,5 +30,6 @@ Restart=on-failure
+ StartLimitBurst=3
+ StartLimitInterval=60s
+ 
++# Disabling the docker service from invoking at bootup
+ [Install]
+-WantedBy=multi-user.target
++#WantedBy=multi-user.target
+-- 
+2.25.1
+

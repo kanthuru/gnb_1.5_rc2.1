@@ -1,0 +1,6 @@
+## First, convert the binary file to ascii file, one byte per line:
+xxd -g 1 -c 1 v_0_10_12_1_UPC_0_2_25_3_x7121mserdesonly.hdr > v_0_10_12_1_UPC_0_2_25_3_x7121mserdesonly.txt
+
+## Then, convert the ascii file to C header file:
+python conv_88x7121_fw_to_array.py v_0_10_12_1_UPC_0_2_25_3_x7121mserdesonly.txt
+

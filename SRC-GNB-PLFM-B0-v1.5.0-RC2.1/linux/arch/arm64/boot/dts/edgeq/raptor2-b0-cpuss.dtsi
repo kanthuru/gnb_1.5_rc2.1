@@ -1,0 +1,345 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * EdgeQ Inc.
+ *
+ *
+ * Raptor2 Platform
+ */
+
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+
+#include "raptor2-b0-gicv3.dtsi"
+
+/ {
+	model = "EdgeQ-Raptor2";
+	compatible = "arm,edgeq-raptor2";
+	chip-version = "B0";
+	interrupt-parent = <&gic>;
+	#address-cells = <2>;
+	#size-cells = <2>;
+
+	psci {
+		compatible = "arm,psci-0.2";
+		method = "smc";
+	};
+
+	cpu_info: cpus {
+		#address-cells = <2>;
+		#size-cells = <0>;
+
+		cpu-map {
+			cluster0 {
+				core0 {
+					thread0 {
+						cpu = <&E1_C0_0>;
+					};
+
+					thread1 {
+						cpu = <&E1_C0_1>;
+					};
+				};
+
+				core1 {
+					thread0 {
+						cpu = <&E1_C1_0>;
+					};
+					thread1 {
+						cpu = <&E1_C1_1>;
+					};
+				};
+
+				core2 {
+					thread0 {
+						cpu = <&E1_C2_0>;
+					};
+					thread1 {
+						cpu = <&E1_C2_1>;
+					};
+				};
+
+				core3 {
+					thread0 {
+						cpu = <&E1_C3_0>;
+					};
+					thread1 {
+						cpu = <&E1_C3_1>;
+					};
+				};
+
+				core4 {
+					thread0 {
+						cpu = <&E1_C4_0>;
+					};
+					thread1 {
+						cpu = <&E1_C4_1>;
+					};
+				};
+			};
+
+			cluster1 {
+				core0 {
+					thread0 {
+						cpu = <&E1_P0_0>;
+					};
+					thread1 {
+						cpu = <&E1_P0_1>;
+					};
+				};
+
+				core1 {
+					thread0 {
+						cpu = <&E1_P1_0>;
+					};
+					thread1 {
+						cpu = <&E1_P1_1>;
+					};
+				};
+
+				core2 {
+					thread0 {
+						cpu = <&E1_P2_0>;
+					};
+					thread1 {
+						cpu = <&E1_P2_1>;
+					};
+				};
+
+				core3 {
+					thread0 {
+						cpu = <&E1_P3_0>;
+					};
+					thread1 {
+						cpu = <&E1_P3_1>;
+					};
+				};
+			};
+		};
+
+		E1_C0_0: cpu@000 {
+			device_type = "cpu";
+			compatible = "arm,neoverse-e1";
+			reg = <0x0 0x000>;
+			enable-method = "psci";
+			numa-node-id = <0>;
+		};
+
+		E1_C0_1: cpu@001 {
+			device_type = "cpu";
+			compatible = "arm,neoverse-e1";
+			reg = <0x0 0x001>;
+			enable-method = "psci";
+			numa-node-id = <0>;
+		};
+
+		E1_C1_0: cpu@100 {
+			device_type = "cpu";
+			compatible = "arm,neoverse-e1";
+			reg = <0x0 0x100>;
+			enable-method = "psci";
+			numa-node-id = <0>;
+		};
+
+		E1_C1_1: cpu@101 {
+			device_type = "cpu";
+			compatible = "arm,neoverse-e1";
+			reg = <0x0 0x101>;
+			enable-method = "psci";
+			numa-node-id = <0>;
+		};
+
+		E1_C2_0: cpu@200 {
+			device_type = "cpu";
+			compatible = "arm,neoverse-e1";
+			reg = <0x0 0x200>;
+			enable-method = "psci";
+			numa-node-id = <0>;
+		};
+
+		E1_C2_1: cpu@201 {
+			device_type = "cpu";
+			compatible = "arm,neoverse-e1";
+			reg = <0x0 0x201>;
+			enable-method = "psci";
+			numa-node-id = <0>;
+		};
+
+		E1_C3_0: cpu@300 {
+			device_type = "cpu";
+			compatible = "arm,neoverse-e1";
+			reg = <0x0 0x300>;
+			enable-method = "psci";
+			numa-node-id = <0>;
+		};
+
+		E1_C3_1: cpu@301 {
+			device_type = "cpu";
+			compatible = "arm,neoverse-e1";
+			reg = <0x0 0x301>;
+			enable-method = "psci";
+			numa-node-id = <0>;
+		};
+
+		E1_C4_0: cpu@400 {
+			device_type = "cpu";
+			compatible = "arm,neoverse-e1";
+			reg = <0x0 0x400>;
+			enable-method = "psci";
+			numa-node-id = <0>;
+		};
+
+		E1_C4_1: cpu@401 {
+			device_type = "cpu";
+			compatible = "arm,neoverse-e1";
+			reg = <0x0 0x401>;
+			enable-method = "psci";
+			numa-node-id = <0>;
+		};
+
+		E1_P0_0: cpu@10000 {
+			device_type = "cpu";
+			compatible = "arm,neoverse-e1";
+			reg = <0x0 0x10000>;
+			enable-method = "psci";
+			numa-node-id = <0>;
+		};
+
+		E1_P0_1: cpu@10001 {
+			device_type = "cpu";
+			compatible = "arm,neoverse-e1";
+			reg = <0x0 0x10001>;
+			enable-method = "psci";
+			numa-node-id = <0>;
+		};
+
+		E1_P1_0: cpu@10100 {
+			device_type = "cpu";
+			compatible = "arm,neoverse-e1";
+			reg = <0x0 0x10100>;
+			enable-method = "psci";
+			numa-node-id = <0>;
+		};
+
+		E1_P1_1: cpu@10101 {
+			device_type = "cpu";
+			compatible = "arm,neoverse-e1";
+			reg = <0x0 0x10101>;
+			enable-method = "psci";
+			numa-node-id = <0>;
+		};
+
+		E1_P2_0: cpu@10200 {
+			device_type = "cpu";
+			compatible = "arm,neoverse-e1";
+			reg = <0x0 0x10200>;
+			enable-method = "psci";
+			numa-node-id = <0>;
+		};
+
+		E1_P2_1: cpu@10201 {
+			device_type = "cpu";
+			compatible = "arm,neoverse-e1";
+			reg = <0x0 0x10201>;
+			enable-method = "psci";
+			numa-node-id = <0>;
+		};
+
+		E1_P3_0: cpu@10300 {
+			device_type = "cpu";
+			compatible = "arm,neoverse-e1";
+			reg = <0x0 0x10300>;
+			enable-method = "psci";
+			numa-node-id = <0>;
+		};
+
+		E1_P3_1: cpu@10301 {
+			device_type = "cpu";
+			compatible = "arm,neoverse-e1";
+			reg = <0x0 0x10301>;
+			enable-method = "psci";
+			numa-node-id = <0>;
+		};
+	};
+
+	armv8_arch_timer: timer {
+		compatible = "arm,armv8-timer";
+		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
+			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
+			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
+			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
+		clock-frequency = <3680000>;
+	};
+
+	dsu_c0: dsu-cluster-0 {
+		compatible = "arm,dsu-pmu";
+		interrupts = <GIC_SPI 819 IRQ_TYPE_LEVEL_HIGH>;
+		status = "disabled";
+	};
+
+	dsu_p0: dsu-cluster-1 {
+		compatible = "arm,dsu-pmu";
+		interrupts = <GIC_SPI 947 IRQ_TYPE_LEVEL_HIGH>;
+		status = "disabled";
+	};
+
+	cmn_pmu: cmn-pmu@100000000 {
+	       compatible = "arm,cmn-600";
+	       /* Physical address of the base (PERIPHBASE) */
+	       reg = <0x1 0x00000000 0x0 0x4000000>;
+	       interrupts = <GIC_SPI 255 IRQ_TYPE_LEVEL_HIGH>;
+	       /* Offset from PERIPHBASE of the configuration discovery node */
+	       arm,root-node = <0x900000>;
+	       status = "disabled";
+	};
+
+	armv8_pmuv3: pmu {
+		compatible = "arm,neoverse-e1-pmu";
+		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH>;
+		status = "disabled";
+	};
+
+	uart_clk: uart-clk {
+		compatible = "fixed-clock";
+		#clock-cells = <0>;
+		/*clock-frequency = <9216000>; FPGA */
+		clock-frequency = <1843200>; /* Divisor = (1843200 / (19200 * 16)) = 6 */
+	};
+
+	cpuss_serial0: serial@70340000 {
+		status = "disabled";
+		device_type = "serial";
+		compatible = "ns16550a";
+		reg = <0 0x70340000 0x0 0x1000>;
+		reg-shift = <3>;
+		reg-offset = <0x40>;
+		reg-io-width = <4>;
+		clocks = <&uart_clk>;
+		clock-frequency = <9216000>; /* 10MHz */
+		interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
+	};
+
+	cpuss_serial1: serial@70380000 {
+		status = "disabled";
+		device_type = "serial";
+		compatible = "ns16550a";
+		reg = <0 0x70380000 0x0 0x1000>;
+		reg-shift = <3>;
+		reg-offset = <0x40>;
+		reg-io-width = <4>;
+		clocks = <&uart_clk>;
+		/*clock-frequency = <9216000>; FPGA */
+		clock-frequency = <1843200>;
+		interrupts = <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
+	};
+
+	crss: crss@0x647C0000{
+		status = "disabled";
+		compatible = "edgeq,crss";
+		reg =  <0x0 0x647C0000 0x0 0x40000>,
+			<0x0 0x1C8CC800 0x0 0x800>;
+		reg-names = "qua_reg", "memss";
+		num-queues = <1>;
+		cmdq-pool-size = <0x10000>; /* For dma_alloc_coherent */
+		interrupts = <GIC_SPI 497 IRQ_TYPE_LEVEL_HIGH>;
+		dma-coherent;
+	};
+};

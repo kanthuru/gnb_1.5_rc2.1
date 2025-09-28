@@ -1,0 +1,56 @@
+#!/bin/bash
+
+############################################################################################################################################################
+############################################################################################################################################################
+############################################################################################################################################################
+####################### Author: onkar.kadam@edgeq.io
+####################### Date: 01/10/2024
+############################################################################################################################################################
+############################################################################################################################################################
+############################################################################################################################################################
+
+#Loop to exit from the script in case of failure
+status_check() { 
+		echo "Issues with $1" && exit 1 
+}
+
+#Loop to handle the variables
+optspec=":hv-:"
+
+#Below loop will handle the arguments
+while getopts "$optspec" optchar; do
+	#This will handle the firmware bin and ddr bin absolute path
+	case "${optchar}" in
+		-)
+			case "${OPTARG}" in
+				firmware)
+					FIRMWARE="${!OPTIND}"; OPTIND=$(( $OPTIND + 1 ))
+					;;
+				ddr)
+					DDR="${!OPTIND}"; OPTIND=$(( $OPTIND + 1 ))
+					;;
+			esac;;
+		#This will show the expected triggers
+		h)
+			echo "usage: $0 [-v] [--firmware <firmware.bin> [--ddr <ddr_image.bin>]" >&2
+			exit 0
+			;;
+		#This will show the version of the tool
+		v)
+			echo "EdgeQ Inc FAILSAFE FW Generation Update Tool v1.0" >&2
+			exit 0
+			;;
+		#This will be triggered if the input is invalid
+		*)
+			echo "Invalid input"
+			exit 0
+			;;
+	esac
+done
+
+#Below command shall generate firmware_fs.bin
+dd if=/dev/zero bs=1M count=4 | tr "\000" "\377" > firmware_fs.bin
+#Below command shall add the failsafe firmware to the firmware_fs.bin
+dd if=${FIRMWARE} of=firmware_fs.bin bs=$((0x40000)) seek=$((0x0)) conv=notrunc
+#Below command shall add the ddr image to the firmware_fs.bin
+dd if=${DDR} of=firmware_fs.bin bs=$((0x40000)) seek=$((0x280000/0x40000)) conv=notrunc

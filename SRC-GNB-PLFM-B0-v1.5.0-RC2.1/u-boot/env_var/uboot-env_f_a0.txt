@@ -1,0 +1,31 @@
+
+
+arch=arm
+baudrate=115200
+board=raptor2
+board_name=raptor2
+bootargs=root=/dev/ram0 rw console=ttyS0,115200n8 earlycon=edgeq8250,mmio32,0x70434040,115200n8 maxcpus=16
+bootcmd=run swap_env; run load_images_f; run boot_linux_r
+bootdelay=3
+boot_linux_r=booti ${kernel_addr_r} ${ramdisk_addr_r} ${fdt_addr_r}
+cpu=armv8
+env_addr_r=0x402000000
+env_size=0x40000
+env1_addr_f=0x200000
+env2_addr_f=0x240000
+ethact=eth0
+ethlink=2
+ethspeed=10g
+fdt_addr_f=0xF80000
+fdt_addr_r=0x406000000
+kernel_addr_f=0x500000
+kernel_addr_r=0x408000000
+load_images_f=sf probe; sf read ${fdt_addr_r} ${fdt_addr_f} 0x80000; sf read ${kernel_addr_r} ${kernel_addr_f} 0x500000; sf read ${ramdisk_addr_r} ${ramdisk_addr_f} 0x580000
+loopback=none
+ramdisk_addr_f=0xA00000
+ramdisk_addr_r=0x40C000000
+soc=raptor2
+swap_env=sf probe; sf read ${env_addr_r} ${env2_addr_f} ${env_size}; sf update ${env_addr_r} ${env1_addr_f} ${env_size}
+vendor=edgeq
+kernel_comp_addr_r=0x42B400000
+kernel_comp_size=0x1000000

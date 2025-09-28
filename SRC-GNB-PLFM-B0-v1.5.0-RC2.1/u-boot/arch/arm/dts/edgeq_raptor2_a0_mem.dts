@@ -1,0 +1,89 @@
+/dts-v1/;
+
+/ {
+	interrupt-parent = <0x8001>;
+	#size-cells = <0x2>;
+	#address-cells = <0x2>;
+	compatible = "linux,dummy-virt";
+
+	aliases {
+		spi0 = &spi;
+	};
+
+	memory@400000000 {
+		reg = <0x00000004 0x00000000 0x2 0x00000000>;
+		device_type = "memory";
+	};
+
+	cpus {
+		#size-cells = <0x0>;
+		#address-cells = <0x1>;
+
+		cpu@0 {
+			reg = <0x0>;
+			compatible = "arm,armv8";
+			device_type = "cpu";
+			enable-method = "psci";
+		};
+
+		cpu@1 {
+			reg = <0x1>;
+			compatible = "arm,armv8";
+			device_type = "cpu";
+			enable-method = "psci";
+		};
+	};
+
+	psci {
+		compatible = "arm,psci-1.0", "arm,psci-0.2";
+		method = "smc";
+	};
+
+	chosen {
+		stdout-path = &uart0;
+	};
+
+	uart0: serial@70434000 {
+		clock-names = "uartclk";
+		reg = <0x0 0x70434000 0x0 0x1000>;
+		compatible = "ns16550a", "ns16550";
+		clock-frequency = <1500000000>; /* 1.5 GHz */
+		reg-shift = <3>;
+		reg-offset = <0x40>;    /* Base * 2 */
+	};
+
+	spiclk: virt_100mhz {
+		#clock-cells = <0>;
+		compatible = "fixed-clock";
+		clock-frequency = <750000000>;
+	};
+
+	spi: spi@704d0000 {
+		compatible = "andestech,atcspi200";
+		reg = <0x0 0x704d0000 0x0 0x1000>;
+		num-cs = <1>;
+		/* interrupts = <0 12 4>; */
+		clocks = <&spiclk>;
+		#address-cells = <0x1>;
+		#size-cells = <0x0>;
+		flash@0 {
+		     compatible = "jedec,spi-nor";
+		     spi-max-frequency = <80000000>;
+		     reg = <0>;
+		};
+	};
+
+	ether0: ethernet@3c040000 {
+		compatible = "edgeq,xgbe";
+		reg = <0x0 0x3C040000 0x0 0x40000>,     // XGMAC/XLGMAC addr
+		      <0x0 0x3C1C0000 0x0 0x40000>,     // XPCS/XLGPCS addr
+		      <0x0 0x3C2C0000 0x0 0x10000>,     // MISC addr; on eth0 only
+		      <0x0 0x3C2F0000 0x0 0x10000>;     // E56 addr; on eth0 only
+		reg-names = "xgmac", "xpcs", "misc", "e56";
+		max-speed = <10000>;
+		phy-mode = "usxgmii";
+		phy-addr = <0x1D>;
+		phy-lane = <0>;
+		prog-e32;       // Only XPCS-0 or XLGPCS-25G programs E32
+	};
+};

@@ -1,0 +1,176 @@
+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+%YAML 1.2
+---
+$id: http://devicetree.org/schemas/pci/raptor2-pcie-rc.yaml#
+$schema: http://devicetree.org/meta-schemas/core.yaml#
+
+title: Raptor2 PCI Root Complex Schema
+
+description: |
+  This YAML file describes the device tree binding for the Raptor2 PCIe Root Complex.
+
+maintainers:
+  - Aman Sharma <aman.Sharma@edgeq.io>
+  - Aakash Verma <aakash.verma@edgeq.io>
+
+properties:
+  $nodename:
+    pattern: "^raptor2-pcie-rc@"
+
+  reg:
+    maxItems: 6
+    items:
+      - description: IP reg DBI
+      - description: Configuration space
+      - description: IP reg ATU
+      - description: Port Configuration
+      - description: PCIe L4 Control Registers
+      - description: SIF Control Registers
+
+  reg-names:
+    items:
+      - const: "dbi"
+      - const: "config"
+      - const: "atu"
+      - const: "port_cfg"
+      - const: "lk_reg"
+      - const: "sif_ctrl"
+
+  dma-coherent: true
+
+  num-lanes:
+    description: Number of PCIe lanes
+    $ref: /schemas/types.yaml#/definitions/uint8
+    minimum: 1
+    default: 1
+    maximum: 16
+
+  dma-ch:
+    description: Maximum number of DMA channels
+    $ref: /schemas/types.yaml#/definitions/uint32
+    type: integer
+    minimum: 1
+    default: 8
+    maximum: 32
+
+  max-ch-mem:
+    description: Maximum memory allocated to DMA channels
+    $ref: /schemas/types.yaml#/definitions/uint32
+    type: integer
+    minimum: 1
+    default: 131072
+    minimum: 131072
+    maximum: 2147483647
+
+  ddr-addr:
+    description: BAR2 DDR address
+    $ref: /schemas/types.yaml#/definitions/uint64
+    type: integer
+    minimum: 1
+    default: 34359738368
+    maximum: 34359738368
+
+  ddr-size:
+    description: BAR2 DDR size
+    $ref: /schemas/types.yaml#/definitions/uint64
+    type: integer
+    minimum: 1
+    default: 8589934592
+    maximum: 8589934592
+
+  dma-ll-addr:
+    description: Link List for DMA, in DDR address
+    $ref: /schemas/types.yaml#/definitions/uint64
+    type: integer
+    minimum: 0
+    maximum: 4294967295
+
+  dma-ll-size:
+    description: Link List for DMA, in DDR size
+    $ref: /schemas/types.yaml#/definitions/uint64
+    type: integer
+    minimum: 0
+    maximum: 2147483647
+
+  hdma-reg-addr:
+    description: HDMA reg address
+    $ref: /schemas/types.yaml#/definitions/uint32
+    type: integer
+    minimum: 0
+    maximum: 4294967295
+
+  hdma-reg-size:
+    description: HDMA reg size
+    $ref: /schemas/types.yaml#/definitions/uint32
+    type: integer
+    minimum: 0
+    maximum: 524287
+
+  ep-off-addr:
+    description: Endpoint Offset Addr
+    $ref: /schemas/types.yaml#/definitions/uint64
+    type: integer
+    minimum: 0
+    maximum: 16777215
+
+  ep-off-size:
+    description: Endpoint Offset Size
+    $ref: /schemas/types.yaml#/definitions/uint64
+    type: integer
+    minimum: 0
+    maximum: 262143
+
+  max-functions:
+    description: Maximum number of functions that can be configured
+    $ref: /schemas/types.yaml#/definitions/uint8
+    type: integer
+    minimum: 1
+    default: 1
+    maximum: 255
+
+  max-link-speed:
+    $ref: /schemas/types.yaml#/
+
+examples:
+  - |
+  pcie1: pcie@3C600000 {
+      compatible = "raptor2-pcie-rc";
+      reg = <0x0 0x3C600000 0x0 0x100000>,     /* IP reg DBI SZ 1MB */
+            <0x60 0x00000000 0x0 0x09000000>, /* Configuration space */
+            <0x0 0x3C900000 0x0 0x80000>,     /* IP reg 2 ATU SZ 512K */
+            <0x0 0x3CB00000 0x0 0x40000>,     /* Port Bringup Configuration */
+            <0x0 0x3C4C0000 0x0 0x20000>,     /* PCIE_L4_CNTL_REG */
+            <0x0 0x3CB20000 0x0 0x20>;        /* SIF control registers */
+      reg-names = "dbi", "config", "atu", "br_up", "lk_reg", "sif_ctrl";
+
+      bus-range = <0x0 0x2>;
+      #address-cells = <3>;
+      #size-cells = <2>;
+      device_type = "pci";
+      dma-coherent;
+
+      /* Outbound */
+      ranges = <0x81000000 0x0 0x00000000 0x60 0x09000000
+                0x0 0x00010000 /* io 64KB */
+                0x02000000 0x0 0x20000000 0x60 0x0A000000
+                0x0 0x20000000 /* 32bit non pref mem 512M */
+                0x43000000 0x60 0x40000000 0x60 0x40000000
+                0x10 0x00000000>; /* 64bit pref mem 64GB */
+
+      num-windows = <0x10>; /* ATU ib/ob windows */
+      interrupt-names = "intx", "msi0";
+      interrupts = <GIC_SPI 423 1>, <GIC_SPI 424 1>;
+      #msi-parent = <&gic>;
+      #interrupt-cells = <1>;
+      interrupt-parent = <&gic>;
+      interrupt-map-mask = <0 0 0 7>;
+      interrupt-map = <0 0 0 1 &gic 0x0 0x0 GIC_SPI 423 1>,
+                      <0 0 0 2 &gic 0x0 0x0 GIC_SPI 422 1>,
+                      <0 0 0 3 &gic 0x0 0x0 GIC_SPI 421 1>,
+                      <0 0 0 4 &gic 0x0 0x0 GIC_SPI 420 1>;
+
+      linux,pci-domain = <0>;
+      raptor2_early_init;
+      num-lanes = <4>;
+      status = "disabled";
+  };

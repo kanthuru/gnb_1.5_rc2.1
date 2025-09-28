@@ -1,0 +1,11 @@
+#Raptor-2
+config EDGEQ_RAPTOR2_HEARTBEAT
+	bool "Support for EdgeQ Raptor2 Heartbeat from userspace"
+	default y
+	depends on ARCH_EDGEQ
+	depends on EDGEQ_RAPTOR2
+	help
+	Enables heartbeat support from linux userspace.
+	The value 0 from linux userspace tells to
+	start WDT and 1 represents to stop WDT.
+	It shows whether Heartbeat message is sent or not yet sent.

@@ -1,0 +1,7 @@
+# Raptor-2
+config EDGEQ_RAPTOR2_TEST_WLAN
+	bool "Support for EdgeQ Raptor2 WLAN Test"
+	default n
+	depends on ARCH_EDGEQ
+	help
+	Enables Test WLAN Module

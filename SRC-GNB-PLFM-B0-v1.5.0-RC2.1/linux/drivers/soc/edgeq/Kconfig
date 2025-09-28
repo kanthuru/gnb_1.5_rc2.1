@@ -1,0 +1,13 @@
+# Raptor-2
+menu "Enable EdgeQ SoC drivers"
+
+source "drivers/soc/edgeq/bsscmdq/Kconfig"
+source "drivers/soc/edgeq/sumgr/Kconfig"
+#source "drivers/soc/edgeq/logger/Kconfig"
+source "drivers/soc/edgeq/shmtest/Kconfig"
+source "drivers/soc/edgeq/exmgr/Kconfig"
+source "drivers/soc/edgeq/test_wlan/Kconfig"
+source "drivers/soc/edgeq/eeprom/Kconfig"
+source "drivers/soc/edgeq/heartbeat/Kconfig"
+
+endmenu

@@ -1,0 +1,4 @@
+# Raptor-2
+config EDGEQ_RAPTOR2
+	bool "Support for EdgeQ Raptor2 SoC"
+	default y if ARCH_EDGEQ

@@ -1,0 +1,22 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * EdgeQ Inc.
+ *
+ * EdgeQ Raptor2 MTD DTSi
+ */
+
+/ {
+        sram_mtd: sram_mtd@9C0000000 {
+                status = "disabled";
+                compatible ="mtd-ram";
+                reg = <0x00000009 0xC0000000 0x0 0x8000000>;
+                bank-width = <8>;
+                #address-cells = <1>;
+                #size-cells = <1>;
+
+                ddr_part@0 {
+                        label = "cu-du-partition";
+                        reg = <0x0 0x8000000>;
+                };
+        };
+};

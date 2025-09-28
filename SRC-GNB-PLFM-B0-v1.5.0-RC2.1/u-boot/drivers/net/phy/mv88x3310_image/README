@@ -1,0 +1,6 @@
+First, convert the binary file to ascii file, one byte per line:
+xxd -g 1 -c 1 x33x0fw_0_3_11_0_11832.hdr > x33x0fw_0_3_11_0_11832.txt
+
+Then, convert the ascii file to C header file:
+python conv_88x3310_fw_to_array.py x33x0fw_0_3_11_0_11832.txt 
+
