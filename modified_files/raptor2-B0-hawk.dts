@@ -1,0 +1,114 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * EdgeQ Inc.
+ *
+ *
+ * Raptor2 Platform
+ */
+
+/dts-v1/;
+
+#include "raptor2-B0-titan.dts"
+
+/ {
+	compatible = "edgeq,b0-hawk";
+
+	eq_syscon0: eq_syscon {
+		compatible = "edgeq,syscon";
+		eq_sif_syscon = <&sif_syscon>;
+		eq_gpio_syscon = <&gpio_syscon>;
+		sif_conf = <0x3E8 0x5A000000>,	/* XGMAC 1PPS -> GPIO37 */
+			   <0x3EC 0x0000005A>,  /* GPS reset -> GPIO38 */
+			   <0x2F0 0x00001800>;	/* same as above, set GPIO37/38's msb */
+		gpio_conf = <0x68 0x1E0C0000>,	/* GPIO37 to sif output mode */
+			    <0x6C 0xFFFF1E50>;	/* GPIO 38 as output mode */
+	};
+};
+
+&emmc {
+	status = "ok";
+	/delete-property/ mmc_coherent;
+	memory-region = <&emmc_memory>;
+};
+
+&sdcard {
+	status = "disabled";
+};
+
+&heartbeat {
+	status = "ok";
+};
+
+
+&ether0 {
+	edgeq,pmd-num-chans = <3>;
+	edgeq,pmd-start-chan = <0>;
+	edgeq,virt-chan-uio-id = <1>;
+	phy-addr = <0x0>;
+	/delete-property/ phy-rate-match;
+	status = "ok";
+	phy-handle = <&phy0>;
+	mdio0: mdio@0 {
+		compatible = "snps,dwmac-mdio";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		phy0: ethernet-phy@0 {
+			compatible = "ethernet-phy-ieee802.3-c45";
+			reg = <0>;
+		};
+	};
+};
+
+&ether1 {
+	edgeq,pmd-num-chans = <3>;
+	edgeq,pmd-start-chan = <0>;
+	edgeq,virt-chan-uio-id = <2>;
+	status = "disabled";
+};
+
+&ether2 {
+	status = "disabled";
+};
+
+&ether3 {
+	status = "disabled";
+};
+
+&ether4 {
+	status = "disabled";
+};
+
+&bss_serial1 {
+	status = "ok";
+	clock-frequency = <750000000>;
+	gnss {
+		status = "okay";
+		current-speed = <460800>;
+	};
+};
+
+/*
+ *      uart = 0,1,7,8
+ *      pcie_perst = 50
+ *      SFP2_PWR_EN = 15
+ *      i2c2 = 42,43
+ *      i2c3 = 44,45
+ *      MV PHY reset = 6
+ *      THERAMAL_TRIP = 54
+ */
+&socgpio {
+	status = "disabled";
+	gpio-reserved-ranges = <0 2>, <6 3>, <15 1>, <42 4>, <50 1>, <54 1>;
+};
+
+&socgpio_pinctrl {
+	status = "ok";
+	gpio-reserved-ranges = <0 2>, <6 3>, <15 1>, <42 4>, <50 1>, <54 1>;
+};
+
+&usb1 {
+	status = "disabled";
+	pinctrl-names = "vbus";
+	pinctrl-0 = <&state_vbus_40>;
+	vbus-gpios = <&socgpio_pinctrl 40 GPIO_ACTIVE_HIGH>;
+};

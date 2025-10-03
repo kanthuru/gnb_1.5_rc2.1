@@ -1,0 +1,10 @@
+[Unit]
+Description=Raptor2 Wrapper Service
+After=network.target
+
+[Service]
+ExecStart=/etc/raptor2_wrapper.sh
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

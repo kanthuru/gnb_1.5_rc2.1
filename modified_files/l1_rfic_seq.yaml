@@ -1,0 +1,75 @@
+# CAUTION: DO NOT MODIFY ANY ENTRIES IN THIS FILE
+# 
+# [INFO]
+# This file is for internal usage and is created for OAM Service to provide
+# inputs of RFIC+FEM Control to L1-control FW. As the RFGPIO Pin mapping varies
+# w.r.t each Board-type+RFIC card combination, the pin control has been
+# abstracted into this file
+#
+# [PURPOSE]
+# For each paired combination of EdgeQ board-type + RFIC Card, there are
+# 5 set of routines that L1-control FW is dependent on,
+# 1> Default state for all RFGPIO Pins needed for FEM+RFIC Control
+# 2> State of RFGPIO Pins for Transmit ON/OFF Control
+# 3> State of RFGPIO Pins for Receive ON/OFF Control
+#
+# [KEYWORDS]
+# OAM Recognizes below keywords in the YAML file definition,
+# * Board name prefixed with 'board_type_'
+# * Supported RFIC prefixed with 'rfic_name_'
+# * Grouping of pin states for the 5 defined events,
+#   - default_state_sequence
+#   - tx_on_sequence
+#   - tx_off_sequence
+#   - rx_on_sequence
+#   - rx_off_sequence
+# * rfgpio_pin_0 to rfgpio_pin_31 and state of the GPIO as 0/1
+# * Each 'rfgpio_pin_N' entry defines a pair for RFGPIO Pin and its state
+# * L1-control FW will take care of changing the state of pins at proper slot boundaries
+#
+# [GPIO PIN DELAY]
+# The second argument for each pin gives the gpio pin advance/delay which is signed
+# number in microsec to nanosec precision[for 1us ,the input should be 1000ns] which has to
+# be updated per baord and its requirements,if its not mentioned default value 0 is taken
+#        GPIO_PIN       [state , delay]
+#for eg: rfgpio_pin_27: [0 , 1000]
+
+rfgpio_control:
+    default_state_sequence:
+        rfgpio_pin_2:  [0]
+        rfgpio_pin_6:  [0]
+        rfgpio_pin_7:  [0]
+        rfgpio_pin_10: [0]
+        rfgpio_pin_13: [0]
+        rfgpio_pin_14: [0]
+        rfgpio_pin_24: [0]
+        rfgpio_pin_18: [0]
+    tx_on_sequence:
+        rfgpio_pin_6:  [1]
+        rfgpio_pin_2:  [1]
+        rfgpio_pin_13: [1]
+        rfgpio_pin_14: [1]
+        rfgpio_pin_24: [0]
+        rfgpio_pin_18: [0]
+    tx_off_sequence:
+        rfgpio_pin_6:  [0]
+        rfgpio_pin_2:  [0]
+        rfgpio_pin_13: [0]
+        rfgpio_pin_14: [0]
+    rx_on_sequence:
+        rfgpio_pin_7:  [1]
+        rfgpio_pin_10: [1]
+        rfgpio_pin_24: [1]
+        rfgpio_pin_18: [1]
+    rx_off_sequence:
+        rfgpio_pin_7:  [0]
+        rfgpio_pin_10: [0]
+        rfgpio_pin_24: [0]
+        rfgpio_pin_18: [0]
+    reset_sequence:
+        rfgpio_pin_8:  1
+        sleep        : 1  #Sleep needed at this point 
+        rfgpio_pin_8:  0
+        sleep        : 1  #Sleep needed at this point 
+        rfgpio_pin_8:  1
+

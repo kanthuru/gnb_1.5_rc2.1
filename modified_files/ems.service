@@ -1,0 +1,14 @@
+[Unit]
+Description=EMS Service
+After=network.target
+
+[Service]
+WorkingDirectory=/ems
+ExecStart=/bin/python main.py
+Restart=always
+User=root
+Group=root
+Environment="PYTHONUNBUFFERED=1"
+
+[Install]
+WantedBy=multi-user.target

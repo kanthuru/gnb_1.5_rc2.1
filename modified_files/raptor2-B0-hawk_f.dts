@@ -1,0 +1,51 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * EdgeQ Inc.
+ *
+ *
+ * Raptor2 Platform
+ */
+
+/dts-v1/;
+
+#include "raptor2-B0_f.dts"
+
+/ {
+	compatible = "edgeq,b0-hawk";
+	reserved-memory {
+		#address-cells = <2>;
+		#size-cells = <2>;
+		ranges;
+	};
+};
+
+&emmc {
+	status = "ok";
+	/delete-property/ mmc_coherent;
+	memory-region = <&emmc_memory>;
+};
+
+&sdcard {
+	status = "disabled";
+	
+};
+
+&ether0 {
+	phy-addr = <0x0>;
+	//phy-rate-match;
+	status = "ok";
+	phy-handle = <&phy0>;
+	mdio0: mdio@0 {
+		compatible = "snps,dwmac-mdio";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		phy0: ethernet-phy@0 {
+			compatible = "ethernet-phy-ieee802.3-c45";
+			reg = <0>;
+		};
+	};
+};
+
+&ether1 {
+	status = "disabled";
+};
